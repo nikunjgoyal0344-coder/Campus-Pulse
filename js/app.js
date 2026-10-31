@@ -1,6 +1,7 @@
 /**
  * Campus Pulse — Master Application Controller
- * Handles state, natural language parsing, UI rendering, Google Calendar sync, and modals.
+ * Handles state, natural language parsing, UI rendering, Google Calendar sync,
+ * interactive student login, SVG analytics graphs, and micro-animations.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentView = 'list';
   let isSpeaking = false;
   let calendarInstance = null;
+  let selectedLoginProfile = 'alex';
 
   // Initialize Theme
   const savedTheme = StorageService.getTheme();
@@ -36,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================================================================
   function renderApp() {
     renderMetrics();
+    renderAnalytics();
     renderUrgentShelf();
     renderFeed();
     renderUpcomingDeadlinesRail();
@@ -43,20 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
     updateConflictBadge();
   }
 
-  // 1. Render Metric Highlights
+  // 1. Render Metric Highlights with Animated Numbers
   function renderMetrics() {
     const totalCount = notices.length;
     const urgentCount = notices.filter(n => n.isUrgent && !n.isCompleted).length;
     const perksCount = notices.filter(n => n.hasPerk && !n.isCompleted).length;
 
-    const elTotal = document.getElementById('metric-total-count');
-    const elUrgent = document.getElementById('metric-urgent-count');
-    const elPerks = document.getElementById('metric-perks-count');
-    const elStatus = document.getElementById('status-pill-count');
+    animateCountUp('metric-total-count', totalCount);
+    animateCountUp('metric-urgent-count', urgentCount);
+    animateCountUp('metric-perks-count', perksCount);
 
-    if (elTotal) elTotal.textContent = totalCount;
-    if (elUrgent) elUrgent.textContent = urgentCount;
-    if (elPerks) elPerks.textContent = perksCount;
+    const elStatus = document.getElementById('status-pill-count');
     if (elStatus) elStatus.textContent = `${totalCount} Verified`;
 
     // Category Filter Counts
@@ -75,7 +75,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 2. Render Pinned Urgent "Needs Attention Today" Shelf
+  // Smooth number count-up animation
+  function animateCountUp(elementId, targetValue) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const current = parseInt(el.textContent, 10) || 0;
+    if (current === targetValue) {
+      el.textContent = targetValue;
+      return;
+    }
+
+    let start = current;
+    const step = targetValue > current ? 1 : -1;
+    const interval = setInterval(() => {
+      start += step;
+      el.textContent = start;
+      if (start === targetValue) {
+        clearInterval(interval);
+      }
+    }, 40);
+  }
+
+  // 2. Render Analytics Graphs
+  function renderAnalytics() {
+    if (typeof CampusAnalytics !== 'undefined') {
+      CampusAnalytics.render('analytics-graphs-root', notices);
+    }
+  }
+
+  // 3. Render Pinned Urgent "Needs Attention Today" Shelf
   function renderUrgentShelf() {
     const shelf = document.getElementById('urgent-hero-shelf');
     const container = document.getElementById('urgent-shelf-items');
@@ -92,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     countBadge.textContent = `${urgentItems.length} Item${urgentItems.length > 1 ? 's' : ''}`;
 
     container.innerHTML = urgentItems.slice(0, 4).map(item => `
-      <div class="p-3.5 rounded-xl bg-white border border-tomato-200 shadow-xs flex items-start justify-between gap-3">
+      <div class="p-3.5 rounded-xl bg-white border border-tomato-200 shadow-xs flex items-start justify-between gap-3 animate-slide-up">
         <div class="space-y-1">
           <div class="flex items-center gap-2">
             <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-tomato-50 text-tomato border border-tomato-200">
@@ -109,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         <div class="flex flex-col gap-1.5 shrink-0">
-          <button class="btn-quick-done text-xs font-bold px-3 py-1.5 rounded-lg bg-tomato-50 hover:bg-tomato hover:text-white text-tomato border border-tomato-200 transition-all" data-id="${item.id}">
+          <button class="btn-quick-done text-xs font-bold px-3 py-1.5 rounded-lg bg-tomato-50 hover:bg-tomato hover:text-white text-tomato border border-tomato-200 transition-all active:scale-95" data-id="${item.id}">
             Done ✓
           </button>
           ${item.link ? `
@@ -121,16 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `).join('');
 
-    // Attach quick done events
+    // Attach quick done events with confetti burst
     container.querySelectorAll('.btn-quick-done').forEach(btn => {
       btn.onclick = (e) => {
         const id = e.target.getAttribute('data-id');
+        const rect = e.target.getBoundingClientRect();
+        triggerConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
         toggleItemDone(id);
       };
     });
   }
 
-  // 3. Render Main Verified Feed
+  // 4. Render Main Verified Feed
   function renderFeed() {
     const listContainer = document.getElementById('feed-cards-list');
     const emptyState = document.getElementById('feed-empty-state');
@@ -173,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     emptyState.classList.add('hidden');
 
-    // Build Cards HTML
-    listContainer.innerHTML = filtered.map(item => createCardHTML(item)).join('');
+    // Build Cards HTML with staggered animation
+    listContainer.innerHTML = filtered.map((item, idx) => createCardHTML(item, idx)).join('');
 
     // Attach Card Actions
     attachCardEvents(listContainer);
@@ -186,13 +216,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Card HTML Template
-  function createCardHTML(item) {
+  function createCardHTML(item, idx) {
     const isCompleted = item.isCompleted;
     const isUrgent = item.isUrgent && !isCompleted;
     const gCalUrl = generateGoogleCalendarUrl(item);
 
     return `
-      <div class="bg-white rounded-2xl border ${isUrgent ? 'border-2 border-neutral-heading' : 'border-neutral-border hover:border-lavender'} p-5 shadow-sm hover:shadow-md transition-all flex flex-col gap-3 relative overflow-hidden group ${isCompleted ? 'opacity-60 bg-neutral-canvas/60' : ''}" data-id="${item.id}">
+      <div class="bg-white rounded-2xl border ${isUrgent ? 'border-2 border-neutral-heading shadow-md' : 'border-neutral-border hover:border-lavender'} p-5 shadow-sm hover:shadow-md transition-all flex flex-col gap-3 relative overflow-hidden group animate-slide-up ${isCompleted ? 'opacity-60 bg-neutral-canvas/60' : ''}" style="animation-delay: ${idx * 40}ms;" data-id="${item.id}">
         
         ${isUrgent ? '<div class="absolute top-0 left-0 right-0 h-1.5 bg-neutral-heading"></div>' : ''}
 
@@ -286,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="flex items-center justify-between pt-1 border-t border-neutral-border/60 flex-wrap gap-2">
           <div class="flex items-center gap-2 flex-wrap">
             <!-- 1-Click Google Calendar Sync -->
-            <a href="${gCalUrl}" target="_blank" rel="noopener" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-heading hover:bg-neutral-body text-white text-xs font-bold transition-all shadow-sm">
+            <a href="${gCalUrl}" target="_blank" rel="noopener" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-heading hover:bg-neutral-body text-white text-xs font-bold transition-all shadow-sm active:scale-95">
               <span class="material-symbols-outlined text-[16px]">edit_calendar</span>
               <span>Google Calendar</span>
             </a>
@@ -297,8 +327,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <span class="hidden sm:inline">.ICS</span>
             </button>
 
-            <!-- Toggle Done -->
-            <button class="btn-toggle-done flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${isCompleted ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-neutral-canvas hover:bg-neutral-border text-neutral-heading'} text-xs font-semibold transition-colors" data-id="${item.id}">
+            <!-- Toggle Done with Confetti -->
+            <button class="btn-toggle-done flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${isCompleted ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-neutral-canvas hover:bg-neutral-border text-neutral-heading'} text-xs font-semibold transition-colors active:scale-95" data-id="${item.id}">
               <span class="material-symbols-outlined text-[16px]">${isCompleted ? 'undo' : 'check'}</span>
               <span>${isCompleted ? 'Mark Pending' : 'Mark Done'}</span>
             </button>
@@ -332,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  // 4. Attach Card Interaction Handlers
+  // 5. Attach Card Interaction Handlers
   function attachCardEvents(container) {
     // Download .ICS
     container.querySelectorAll('.btn-download-ics').forEach(btn => {
@@ -343,10 +373,12 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
 
-    // Mark Done / Attended
+    // Mark Done / Attended (with confetti celebration)
     container.querySelectorAll('.btn-toggle-done').forEach(btn => {
       btn.onclick = (e) => {
         const id = e.currentTarget.getAttribute('data-id');
+        const rect = e.currentTarget.getBoundingClientRect();
+        triggerConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
         toggleItemDone(id);
       };
     });
@@ -394,7 +426,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 5. Render Upcoming Deadlines Right Rail
+  // 6. Confetti Particle Burst Animation
+  function triggerConfetti(x, y) {
+    const colors = ['#C8B3E8', '#D4FF3F', '#E34234', '#4A326B', '#10B981', '#3B82F6'];
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement('div');
+      p.className = 'confetti-particle';
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      p.style.backgroundColor = color;
+      p.style.left = `${x}px`;
+      p.style.top = `${y}px`;
+
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = 40 + Math.random() * 80;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance - 20;
+
+      p.style.setProperty('--tx', `${tx}px`);
+      p.style.setProperty('--ty', `${ty}px`);
+
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1200);
+    }
+  }
+
+  // 7. Render Upcoming Deadlines Right Rail
   function renderUpcomingDeadlinesRail() {
     const list = document.getElementById('upcoming-deadlines-list');
     if (!list) return;
@@ -415,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // 6. Render 1-Click Sample Preset Chips
+  // 8. Render 1-Click Sample Preset Chips
   function renderSamplePresets() {
     const container = document.getElementById('sample-preset-chips');
     if (!container) return;
@@ -502,7 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       triggerToast("Scanning Poster...", "Simulating OCR text recognition from notice board poster photo.");
       
-      // Simulate 1.2s OCR reading delay
       setTimeout(() => {
         const sampleOCR = `📢 CAMPUS RECRUITMENT & TECH WORKSHOP POSTER\nHost: Google Developer Student Clubs (GDSC)\nDate: Next Tuesday at 4:00 PM\nVenue: Turing Computer Lab 201\nPerks: Free high-speed Wi-Fi, custom stickers, and Domino's pizza buffet for registered attendees.\nRegistration link: https://gdsc.community.dev/events/campus-tech-sprint\nContact: lead@gdsc-campus.edu`;
         if (dropPasteText) {
@@ -510,8 +565,74 @@ document.addEventListener('DOMContentLoaded', () => {
           pasteCounter.textContent = `${sampleOCR.length} chars`;
         }
         triggerToast("OCR Scan Complete!", "Poster text extracted. Tap 'Clean & Add' to publish.");
-      }, 1200);
+      }, 1100);
     });
+  }
+
+  // =========================================================================
+  // STUDENT LOGIN / ID CARD PORTAL
+  // =========================================================================
+  const loginModal = document.getElementById('login-modal');
+  const btnOpenLogin = document.getElementById('btn-open-login');
+  const btnHeaderLogin = document.getElementById('btn-header-login');
+  const loginCloseBtn = document.getElementById('login-close-btn');
+  const btnLoginConfirm = document.getElementById('btn-login-confirm');
+  const btnGoogleLogin = document.getElementById('btn-google-login');
+
+  function openLoginModal() {
+    loginModal.classList.remove('hidden');
+    updateIdCardPreview(selectedLoginProfile);
+  }
+
+  if (btnOpenLogin) btnOpenLogin.onclick = openLoginModal;
+  if (btnHeaderLogin) btnHeaderLogin.onclick = openLoginModal;
+  if (loginCloseBtn) loginCloseBtn.onclick = () => loginModal.classList.add('hidden');
+
+  function updateIdCardPreview(profileKey) {
+    const p = DEMO_PROFILES.find(item => item.id === profileKey) || DEMO_PROFILES[0];
+    document.getElementById('id-card-roll').textContent = p.rollNo;
+    document.getElementById('id-card-avatar').src = p.avatar;
+    document.getElementById('id-card-name').textContent = p.name;
+    document.getElementById('id-card-dept').textContent = p.dept;
+    document.getElementById('id-card-year').textContent = `${p.year} • CGPA ${p.cgpa}`;
+  }
+
+  // 1-Click Fast Profile Switcher buttons inside Login Modal
+  document.querySelectorAll('.profile-select-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      document.querySelectorAll('.profile-select-btn').forEach(b => {
+        b.classList.remove('border-2', 'border-lavender-dark', 'bg-lavender-50');
+        b.classList.add('border', 'border-neutral-border', 'bg-neutral-canvas');
+      });
+      e.currentTarget.classList.remove('border', 'border-neutral-border', 'bg-neutral-canvas');
+      e.currentTarget.classList.add('border-2', 'border-lavender-dark', 'bg-lavender-50');
+
+      selectedLoginProfile = e.currentTarget.getAttribute('data-profile');
+      updateIdCardPreview(selectedLoginProfile);
+    };
+  });
+
+  function performLogin(profileKey) {
+    const p = DEMO_PROFILES.find(item => item.id === profileKey) || DEMO_PROFILES[0];
+    profile = { ...p };
+    StorageService.saveProfile(profile);
+    updateSidebarProfile();
+    loginModal.classList.add('hidden');
+    renderApp();
+    triggerToast(`Welcome, ${profile.name}!`, `Logged in as ${profile.dept} student.`);
+  }
+
+  if (btnLoginConfirm) {
+    btnLoginConfirm.onclick = () => performLogin(selectedLoginProfile);
+  }
+
+  if (btnGoogleLogin) {
+    btnGoogleLogin.onclick = () => {
+      triggerToast("Authenticating via Google...", "Verifying university single sign-on credentials.");
+      setTimeout(() => {
+        performLogin(selectedLoginProfile);
+      }, 700);
+    };
   }
 
   // =========================================================================
@@ -651,12 +772,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!digestContentArea) return;
 
     digestContentArea.innerHTML = `
-      <!-- High Level Headline -->
       <div class="p-3.5 rounded-xl bg-lavender-50 border border-lavender/50 text-xs text-neutral-heading leading-relaxed">
         <strong>Executive Summary:</strong> ${digest.headline}
       </div>
 
-      <!-- Critical Deadlines -->
       ${digest.urgentItems.length > 0 ? `
         <div class="flex flex-col gap-2">
           <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-tomato flex items-center gap-1.5">
@@ -677,7 +796,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       ` : ''}
 
-      <!-- Free Food & Campus Perks -->
       ${digest.perkItems.length > 0 ? `
         <div class="flex flex-col gap-2">
           <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-neutral-heading flex items-center gap-1.5">
@@ -698,7 +816,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       ` : ''}
 
-      <!-- Recommended Events -->
       ${digest.eventItems.length > 0 ? `
         <div class="flex flex-col gap-2">
           <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-neutral-muted flex items-center gap-1.5">
@@ -801,8 +918,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateSidebarProfile() {
     const elName = document.getElementById('sidebar-user-name');
     const elRole = document.getElementById('sidebar-user-role');
+    const elAvatar = document.getElementById('sidebar-user-avatar');
     if (elName) elName.textContent = profile.name || 'Alex Rivera';
     if (elRole) elRole.textContent = `${profile.dept ? profile.dept.slice(0, 16) + '...' : 'Student'} (${profile.year ? profile.year.slice(0, 3) : ''})`;
+    if (elAvatar && profile.avatar) elAvatar.src = profile.avatar;
   }
 
   // =========================================================================
@@ -859,14 +978,12 @@ document.addEventListener('DOMContentLoaded', () => {
       renderFeed();
     });
 
-    // Keyboard shortcut '/' to focus search
     window.addEventListener('keydown', (e) => {
       if (e.key === '/' && document.activeElement !== searchInput && document.activeElement.tagName !== 'TEXTAREA') {
         e.preventDefault();
         searchInput.focus();
       }
       if (e.key === 'Escape') {
-        // Close any open modals
         document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.add('hidden'));
       }
     });
@@ -956,6 +1073,15 @@ document.addEventListener('DOMContentLoaded', () => {
     navFeed.onclick = (e) => {
       e.preventDefault();
       setView('list');
+    };
+  }
+
+  const navAnalytics = document.getElementById('nav-analytics');
+  if (navAnalytics) {
+    navAnalytics.onclick = (e) => {
+      e.preventDefault();
+      const el = document.getElementById('analytics-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     };
   }
 
@@ -1129,7 +1255,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function filterBySearchQuery(list, query) {
     const q = query.toLowerCase();
 
-    // Natural Language Query Handlers
     if (q.includes('deadline') || q.includes('urgent')) {
       return list.filter(n => n.isUrgent || n.category === 'deadline');
     }
@@ -1146,7 +1271,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return list.filter(n => n.hasConflict);
     }
 
-    // Standard Substring Search
     return list.filter(n => 
       n.title.toLowerCase().includes(q) ||
       n.description.toLowerCase().includes(q) ||

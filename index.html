@@ -89,7 +89,7 @@
         <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-lavender-50 border border-lavender/50">
           <span class="w-2 h-2 rounded-full bg-lavender-dark animate-pulse"></span>
           <span class="text-xs font-semibold text-neutral-heading">Live Radar Active</span>
-          <span class="text-[10px] text-neutral-muted ml-auto font-medium" id="status-pill-count">24 Verified</span>
+          <span class="text-[10px] text-neutral-muted ml-auto font-medium" id="status-pill-count">12 Verified</span>
         </div>
       </div>
 
@@ -107,6 +107,11 @@
         <a class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-neutral-body hover:bg-neutral-canvas hover:text-neutral-heading font-medium text-sm transition-colors" href="#calendar" id="nav-calendar">
           <span class="material-symbols-outlined text-[20px] text-neutral-muted">calendar_month</span>
           <span>Schedule & Deadlines</span>
+        </a>
+        <a class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-neutral-body hover:bg-neutral-canvas hover:text-neutral-heading font-medium text-sm transition-colors" href="#analytics" id="nav-analytics">
+          <span class="material-symbols-outlined text-[20px] text-neutral-muted">insights</span>
+          <span>Analytics & Trends</span>
+          <span class="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-neutral-canvas text-neutral-heading border border-neutral-border">Graphs</span>
         </a>
         <a class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-neutral-body hover:bg-neutral-canvas hover:text-neutral-heading font-medium text-sm transition-colors" href="#conflicts" id="nav-conflicts">
           <span class="material-symbols-outlined text-[20px] text-neutral-heading">difference</span>
@@ -133,20 +138,23 @@
         </button>
       </div>
 
-      <!-- Profile Trigger -->
+      <!-- Profile Trigger & Switch Profile -->
       <div class="flex items-center justify-between pt-1">
         <button class="flex items-center gap-2.5 hover:opacity-80 transition-opacity text-left" id="btn-open-profile">
-          <div class="w-9 h-9 rounded-full bg-lavender/60 border border-lavender-dark flex items-center justify-center text-lavender-dark font-bold text-sm">
-            AR
-          </div>
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-lavender/60" id="sidebar-user-avatar">
           <div class="flex flex-col">
             <span class="text-xs font-bold text-neutral-heading leading-tight" id="sidebar-user-name">Alex Rivera</span>
             <span class="text-[11px] text-neutral-muted" id="sidebar-user-role">CS & Design '26</span>
           </div>
         </button>
-        <button class="p-1.5 rounded-lg hover:bg-neutral-canvas text-neutral-muted hover:text-neutral-heading border border-neutral-border" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
-          <span class="material-symbols-outlined text-[18px]" id="theme-icon">dark_mode</span>
-        </button>
+        <div class="flex items-center gap-1">
+          <button class="p-1.5 rounded-lg hover:bg-neutral-canvas text-neutral-muted hover:text-neutral-heading border border-neutral-border" id="btn-open-login" title="Switch Student / Sign In">
+            <span class="material-symbols-outlined text-[17px]">switch_account</span>
+          </button>
+          <button class="p-1.5 rounded-lg hover:bg-neutral-canvas text-neutral-muted hover:text-neutral-heading border border-neutral-border" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+            <span class="material-symbols-outlined text-[17px]" id="theme-icon">dark_mode</span>
+          </button>
+        </div>
       </div>
     </div>
   </aside>
@@ -199,6 +207,16 @@
           <span class="sm:hidden">Add</span>
         </button>
 
+        <!-- Student Login Trigger -->
+        <button 
+          class="flex items-center gap-1 px-3 py-2 rounded-xl bg-neutral-canvas hover:bg-neutral-border text-neutral-heading border border-neutral-border text-xs font-bold transition-colors" 
+          id="btn-header-login" 
+          title="Student Login Portal"
+        >
+          <span class="material-symbols-outlined text-[17px]">account_circle</span>
+          <span class="hidden md:inline">Student ID</span>
+        </button>
+
         <!-- Backup Export Button -->
         <button 
           class="p-2 rounded-xl text-neutral-muted hover:text-neutral-heading hover:bg-neutral-canvas border border-neutral-border/70 transition-colors" 
@@ -222,7 +240,7 @@
           <div class="flex flex-col">
             <span class="text-xs font-medium text-neutral-muted">Active Campus Notices</span>
             <div class="flex items-baseline gap-2 mt-0.5">
-              <span class="font-heading font-bold text-2xl text-neutral-heading" id="metric-total-count">6</span>
+              <span class="font-heading font-bold text-2xl text-neutral-heading" id="metric-total-count">12</span>
               <span class="text-xs font-semibold text-lavender-dark bg-lavender-50 px-2 py-0.5 rounded-full border border-lavender/40">Cleaned & Verified</span>
             </div>
             <span class="text-[11px] text-neutral-muted mt-1">Filtered from WhatsApp, LMS & Emails</span>
@@ -252,7 +270,7 @@
           <div class="flex flex-col">
             <span class="text-xs font-medium text-neutral-muted">Free Food & Perks Live</span>
             <div class="flex items-baseline gap-2 mt-0.5">
-              <span class="font-heading font-bold text-2xl text-neutral-heading" id="metric-perks-count">3</span>
+              <span class="font-heading font-bold text-2xl text-neutral-heading" id="metric-perks-count">5</span>
               <span class="text-xs font-bold text-lavender-dark bg-lavender-100 px-2 py-0.5 rounded-full border border-lavender/40">Available</span>
             </div>
             <span class="text-[11px] text-neutral-muted mt-1">Free Boba, Pizza & Grant Stipends</span>
@@ -262,6 +280,15 @@
           </div>
         </div>
       </div>
+
+      <!-- ========================================== -->
+      <!-- ANALYTICS & TRENDS SECTION (TOGGLEABLE)    -->
+      <!-- ========================================== -->
+      <section class="flex flex-col gap-3" id="analytics-section">
+        <div id="analytics-graphs-root">
+          <!-- Dynamically populated SVG graphs from analytics.js -->
+        </div>
+      </section>
 
       <!-- ========================================== -->
       <!-- PINNED "NEEDS ATTENTION TODAY" HERO SHELF  -->
@@ -289,23 +316,23 @@
         <!-- Category Filter Pills -->
         <div class="flex items-center gap-1.5 flex-wrap" id="filter-chips">
           <button class="filter-chip active px-3.5 py-1.5 rounded-xl bg-neutral-heading text-white text-xs font-semibold shadow-sm transition-all" data-category="all">
-            All Notices (<span id="count-all">6</span>)
+            All Notices (<span id="count-all">12</span>)
           </button>
           <button class="filter-chip px-3.5 py-1.5 rounded-xl bg-neutral-canvas text-neutral-heading hover:bg-lavender-100 border border-neutral-border text-xs font-semibold transition-all flex items-center gap-1.5" data-category="urgent">
             <span class="w-1.5 h-1.5 rounded-full bg-tomato"></span>
             ⚡ Urgent (<span id="count-urgent">2</span>)
           </button>
           <button class="filter-chip px-3.5 py-1.5 rounded-xl bg-neutral-canvas text-neutral-heading hover:bg-lavender-100 border border-neutral-border text-xs font-semibold transition-all flex items-center gap-1.5" data-category="food">
-            <span>🍕 Free Food (<span id="count-food">2</span>)</span>
+            <span>🍕 Free Food (<span id="count-food">5</span>)</span>
           </button>
           <button class="filter-chip px-3.5 py-1.5 rounded-xl bg-neutral-canvas text-neutral-heading hover:bg-lavender-100 border border-neutral-border text-xs font-semibold transition-all flex items-center gap-1.5" data-category="placement">
-            <span>💼 Placement (<span id="count-placement">1</span>)</span>
+            <span>💼 Placement (<span id="count-placement">2</span>)</span>
           </button>
           <button class="filter-chip px-3.5 py-1.5 rounded-xl bg-neutral-canvas text-neutral-heading hover:bg-lavender-100 border border-neutral-border text-xs font-semibold transition-all flex items-center gap-1.5" data-category="hackathon">
-            <span>💻 Hackathons (<span id="count-hackathon">1</span>)</span>
+            <span>💻 Hackathons (<span id="count-hackathon">2</span>)</span>
           </button>
           <button class="filter-chip px-3.5 py-1.5 rounded-xl bg-neutral-canvas text-neutral-heading hover:bg-lavender-100 border border-neutral-border text-xs font-semibold transition-all flex items-center gap-1.5" data-category="academic">
-            <span>📚 Academic (<span id="count-academic">1</span>)</span>
+            <span>📚 Academic (<span id="count-academic">2</span>)</span>
           </button>
         </div>
 
@@ -481,7 +508,7 @@
             <div class="flex flex-col gap-0.5">
               <span class="font-heading font-bold text-xs text-neutral-heading">New to Campus Pulse?</span>
               <span class="text-xs text-neutral-body leading-relaxed">
-                Everything here is automatically cleaned and grouped. Click <strong>Add to Google Calendar</strong> on any card to sync it directly to your phone.
+                Everything here is automatically cleaned and grouped. Click <strong>Google Calendar</strong> on any card to sync directly to your personal phone calendar.
               </span>
             </div>
           </div>
@@ -495,8 +522,91 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- MODALS & DRAWERS                           -->
+  <!-- MODAL: ATTRACTIVE STUDENT LOGIN PORTAL     -->
   <!-- ========================================== -->
+  <div class="hidden fixed inset-0 bg-neutral-heading/50 backdrop-blur-md z-50 flex items-center justify-center p-4 modal-backdrop" id="login-modal">
+    <div class="bg-white rounded-3xl border border-neutral-border max-w-lg w-full p-6 sm:p-8 shadow-2xl flex flex-col gap-5 relative overflow-hidden">
+      <!-- Glow background decoration -->
+      <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-lavender/30 blur-2xl pointer-events-none"></div>
+
+      <div class="flex items-center justify-between border-b border-neutral-border/60 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-lavender flex items-center justify-center text-lavender-dark font-bold shadow-sm">
+            <span class="material-symbols-outlined text-[22px]">badge</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-extrabold text-lg text-neutral-heading">Campus Pulse ID Portal</h3>
+            <span class="text-xs text-neutral-muted">Student Verification & Personalized Radar</span>
+          </div>
+        </div>
+        <button class="p-1.5 rounded-xl hover:bg-neutral-canvas text-neutral-muted hover:text-neutral-heading" id="login-close-btn">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- University Digital ID Card Mockup -->
+      <div class="p-4 rounded-2xl bg-gradient-to-tr from-lavender-dark via-indigo-900 to-slate-900 text-white shadow-lg relative overflow-hidden flex flex-col justify-between min-h-[140px]">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-chartreuse animate-pulse"></span>
+            <span class="font-heading font-bold text-xs uppercase tracking-wider text-slate-300">University Student ID</span>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400" id="id-card-roll">23CS0412</span>
+        </div>
+
+        <div class="flex items-center gap-3.5 my-2">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Student" class="w-12 h-12 rounded-xl object-cover ring-2 ring-chartreuse/60 shadow-md" id="id-card-avatar">
+          <div class="flex flex-col">
+            <h4 class="font-heading font-bold text-base text-white leading-tight" id="id-card-name">Alex Rivera</h4>
+            <span class="text-xs text-slate-300" id="id-card-dept">Computer Science & Design</span>
+            <span class="text-[11px] text-chartreuse font-medium" id="id-card-year">3rd Year • CGPA 8.8</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-[10px] text-slate-400 border-t border-white/10 pt-2">
+          <span>Campus Radar Verified</span>
+          <span class="text-chartreuse font-semibold">● ACTIVE</span>
+        </div>
+      </div>
+
+      <!-- 1-Click Fast Switch Demo Profiles -->
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-bold text-neutral-heading">1-Click Fast Student Switch:</span>
+        <div class="grid grid-cols-3 gap-2" id="demo-profiles-picker">
+          <button class="profile-select-btn p-2.5 rounded-xl border-2 border-lavender-dark bg-lavender-50 text-left flex flex-col gap-1 transition-all" data-profile="alex">
+            <span class="font-bold text-xs text-neutral-heading truncate">Alex Rivera</span>
+            <span class="text-[10px] text-neutral-muted">CS 3rd Year</span>
+          </button>
+          <button class="profile-select-btn p-2.5 rounded-xl border border-neutral-border hover:border-lavender bg-neutral-canvas text-left flex flex-col gap-1 transition-all" data-profile="priya">
+            <span class="font-bold text-xs text-neutral-heading truncate">Priya Sharma</span>
+            <span class="text-[10px] text-neutral-muted">AI/ML 4th Year</span>
+          </button>
+          <button class="profile-select-btn p-2.5 rounded-xl border border-neutral-border hover:border-lavender bg-neutral-canvas text-left flex flex-col gap-1 transition-all" data-profile="rohan">
+            <span class="font-bold text-xs text-neutral-heading truncate">Rohan Mehta</span>
+            <span class="text-[10px] text-neutral-muted">Robotics 2nd Year</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Google Student Login Button -->
+      <div class="flex flex-col gap-2 pt-1 border-t border-neutral-border/60">
+        <button class="w-full flex items-center justify-center gap-2.5 py-3 rounded-2xl bg-white hover:bg-neutral-canvas text-neutral-heading border border-neutral-border font-heading font-bold text-xs transition-all shadow-xs" id="btn-google-login">
+          <svg class="w-4 h-4" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.67v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.16z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.17 0 9.99 0 12s.45 3.83 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span>Continue with Google Student Workspace (@campus.edu)</span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between pt-1 text-xs text-neutral-muted">
+        <span>Protected by Campus Single Sign-On</span>
+        <button class="font-bold text-neutral-heading hover:underline" id="btn-login-confirm">Confirm Student Profile</button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL 1: Quick Add & Clean Announcement Modal -->
   <div class="hidden fixed inset-0 bg-neutral-heading/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal-backdrop" id="paste-announcement-modal">
@@ -524,7 +634,7 @@
         rows="5"
       ></textarea>
 
-      <!-- Review Extracted Chips Preview (Appears when text is typed or analyzed) -->
+      <!-- Review Extracted Chips Preview -->
       <div class="hidden flex flex-col gap-3 p-3.5 rounded-xl bg-neutral-canvas border border-neutral-border" id="modal-extracted-preview">
         <span class="text-[11px] font-bold uppercase tracking-wider text-neutral-muted">AI Extracted Fields (Tap to Edit):</span>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -554,7 +664,6 @@
           </div>
         </div>
 
-        <!-- Duplicate / Conflict Warning Pill inside Modal -->
         <div class="hidden p-2.5 rounded-lg bg-tomato-50 border border-tomato-200 text-xs text-tomato font-medium" id="modal-conflict-pill">
           ⚠️ Notice: An event is already scheduled at this venue/time.
         </div>
@@ -616,7 +725,7 @@
         <!-- Rendered AI Briefing Content -->
       </div>
 
-      <!-- Actions: Copy WhatsApp Summary & Voice Synthesis -->
+      <!-- Actions -->
       <div class="flex items-center justify-between pt-3 border-t border-neutral-border/60 flex-wrap gap-2">
         <button class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-neutral-canvas hover:bg-neutral-border text-neutral-heading text-xs font-semibold transition-colors" id="btn-digest-speak">
           <span class="material-symbols-outlined text-[18px]">volume_up</span>
@@ -743,6 +852,7 @@
   <script src="js/extractor.js"></script>
   <script src="js/digest.js"></script>
   <script src="js/calendar.js"></script>
+  <script src="js/analytics.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
