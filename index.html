@@ -226,6 +226,15 @@
         >
           <span class="material-symbols-outlined text-[19px]">download</span>
         </button>
+
+        <!-- Google Gemini Settings Trigger -->
+        <button 
+          class="p-2 rounded-xl text-neutral-muted hover:text-lavender-dark hover:bg-lavender-50 border border-neutral-border/70 transition-colors" 
+          id="btn-gemini-settings" 
+          title="Google Gemini AI Integration"
+        >
+          <span class="material-symbols-outlined text-[19px]">settings_suggest</span>
+        </button>
       </div>
     </header>
 
@@ -836,6 +845,198 @@
     </div>
   </div>
 
+  <!-- MODAL 6: Interactive Poster Scanner Studio -->
+  <div class="hidden fixed inset-0 bg-neutral-heading/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal-backdrop" id="poster-scanner-modal">
+    <div class="bg-white rounded-3xl border border-neutral-border max-w-xl w-full p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-neutral-border/60 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-lavender flex items-center justify-center text-lavender-dark font-bold">
+            <span class="material-symbols-outlined text-[20px]">document_scanner</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-neutral-heading">Poster OCR & Vision Studio</h3>
+            <span class="text-xs text-neutral-muted">Simulated Computer Vision Notice Scanner</span>
+          </div>
+        </div>
+        <button class="p-1.5 rounded-lg hover:bg-neutral-canvas text-neutral-muted" id="scanner-close-btn">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="flex flex-col items-center gap-3">
+        <!-- Interactive Canvas for Laser Scanning -->
+        <div class="relative rounded-2xl overflow-hidden border-2 border-neutral-heading shadow-md bg-neutral-heading">
+          <canvas id="poster-scanner-canvas" width="460" height="280" class="max-w-full h-auto block"></canvas>
+        </div>
+
+        <!-- Sample Poster Switcher -->
+        <div class="flex items-center gap-2 flex-wrap text-xs">
+          <span class="text-neutral-muted font-bold">Sample Poster:</span>
+          <button class="btn-select-poster px-2.5 py-1 rounded-lg bg-lavender-50 border border-lavender/60 text-lavender-dark font-semibold" data-poster="poster-deepmind">
+            Google Keynote
+          </button>
+          <button class="btn-select-poster px-2.5 py-1 rounded-lg bg-neutral-canvas border border-neutral-border text-neutral-heading font-semibold" data-poster="poster-hackathon">
+            HackVerse 2026
+          </button>
+          <button class="btn-select-poster px-2.5 py-1 rounded-lg bg-neutral-canvas border border-neutral-border text-neutral-heading font-semibold" data-poster="poster-exam">
+            CS-402 Exam
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-neutral-border/60">
+        <span class="text-xs text-neutral-muted font-medium" id="scanner-status-text">Ready to scan notice poster</span>
+        <button class="px-5 py-2.5 rounded-xl bg-neutral-heading hover:bg-neutral-body text-white font-heading font-bold text-xs transition-all shadow-sm active:scale-95 flex items-center gap-1.5" id="btn-run-laser-scan">
+          <span class="material-symbols-outlined text-[17px]">center_focus_strong</span>
+          <span>Start Laser OCR Scan</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 7: Conflict Resolution Studio -->
+  <div class="hidden fixed inset-0 bg-neutral-heading/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal-backdrop" id="conflict-resolver-modal">
+    <div class="bg-white rounded-3xl border border-neutral-border max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-neutral-border/60 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-tomato-50 text-tomato flex items-center justify-center font-bold border border-tomato-200">
+            <span class="material-symbols-outlined text-[20px]">alt_route</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-neutral-heading">Room Booking Conflict Resolver</h3>
+            <span class="text-xs text-tomato font-semibold">Overlapping Schedule Detected</span>
+          </div>
+        </div>
+        <button class="p-1.5 rounded-lg hover:bg-neutral-canvas text-neutral-muted" id="conflict-close-btn">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-tomato-50/70 border border-tomato-200 text-xs text-neutral-heading leading-relaxed">
+        <strong>Conflict Summary:</strong> Both <em>Engineering Career Gala</em> and <em>Debate Society Session</em> have booked the <strong>Engineering Atrium</strong> around Friday 4:30 PM.
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="p-3 rounded-xl bg-neutral-canvas border border-neutral-border flex flex-col gap-1">
+          <span class="text-[10px] font-bold text-neutral-muted uppercase">Event A</span>
+          <div class="font-bold text-neutral-heading">Career Gala & Resume Review</div>
+          <div class="text-[11px] text-neutral-muted">4:00 PM • Engineering Atrium</div>
+        </div>
+        <div class="p-3 rounded-xl bg-neutral-canvas border border-neutral-border flex flex-col gap-1">
+          <span class="text-[10px] font-bold text-neutral-muted uppercase">Event B</span>
+          <div class="font-bold text-neutral-heading">Debate Society Open Trials</div>
+          <div class="text-[11px] text-neutral-muted">4:30 PM • Engineering Atrium</div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-neutral-border/60">
+        <button class="px-3.5 py-2 rounded-xl bg-neutral-canvas hover:bg-neutral-border text-neutral-heading text-xs font-semibold" id="btn-notify-coordinators">
+          Notify Club Leads
+        </button>
+        <button class="px-4 py-2 rounded-xl bg-neutral-heading hover:bg-neutral-body text-white text-xs font-bold transition-all shadow-sm" id="btn-reschedule-conflict">
+          Shift Debate to Hall 2 (Auto-Resolve)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 8: Google Gemini AI Settings -->
+  <div class="hidden fixed inset-0 bg-neutral-heading/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal-backdrop" id="gemini-settings-modal">
+    <div class="bg-white rounded-3xl border border-neutral-border max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-neutral-border/60 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-lavender flex items-center justify-center text-lavender-dark font-bold">
+            <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-neutral-heading">Google Gemini AI Engine</h3>
+            <span class="text-xs text-neutral-muted">Live Multimodal Extraction Settings</span>
+          </div>
+        </div>
+        <button class="p-1.5 rounded-lg hover:bg-neutral-canvas text-neutral-muted" id="gemini-close-btn">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <p class="text-xs text-neutral-muted leading-relaxed">
+        Campus Pulse operates with an instant zero-dependency client-side parser by default. You can optionally paste your personal Google Gemini API key to enable live cloud extraction!
+      </p>
+
+      <div class="flex flex-col gap-1.5 text-xs">
+        <label class="font-bold text-neutral-heading">Google Gemini API Key (Optional)</label>
+        <input type="password" id="gemini-api-key-input" placeholder="AIzaSy..." class="w-full p-2.5 rounded-xl border border-neutral-border bg-neutral-canvas text-neutral-heading focus:bg-white focus:outline-none">
+        <span class="text-[11px] text-neutral-muted">Key is stored purely client-side in your browser's localStorage.</span>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-neutral-border/60">
+        <button class="text-xs text-tomato hover:underline font-semibold" id="btn-clear-gemini-key">
+          Clear Key
+        </button>
+        <div class="flex items-center gap-2">
+          <button class="px-4 py-2 rounded-xl text-neutral-muted hover:text-neutral-heading text-xs font-semibold" id="gemini-cancel-btn">
+            Cancel
+          </button>
+          <button class="px-4 py-2 rounded-xl bg-neutral-heading text-white text-xs font-bold" id="btn-save-gemini-key">
+            Save Gemini Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING CHAT WIDGET: "Ask Campus Pulse" -->
+  <div class="fixed bottom-6 left-6 z-40 hidden sm:block">
+    <button class="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-neutral-heading hover:bg-neutral-body text-white font-heading font-bold text-xs shadow-xl active:scale-95 transition-all" id="btn-toggle-chat">
+      <span class="material-symbols-outlined text-[19px] text-chartreuse">chat_bubble</span>
+      <span>Ask Campus Pulse</span>
+      <span class="w-2 h-2 rounded-full bg-chartreuse animate-pulse"></span>
+    </button>
+  </div>
+
+  <!-- CHAT DRAWER MODAL -->
+  <div class="hidden fixed bottom-6 left-6 max-w-sm w-full bg-white rounded-3xl border border-neutral-border shadow-2xl z-50 flex flex-col overflow-hidden max-h-[500px]" id="chat-drawer-modal">
+    <!-- Header -->
+    <div class="p-3.5 bg-neutral-heading text-white flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-lavender flex items-center justify-center text-lavender-dark font-bold">
+          <span class="material-symbols-outlined text-[16px]">smart_toy</span>
+        </div>
+        <span class="font-heading font-bold text-xs">Ask Campus Pulse</span>
+      </div>
+      <button class="text-neutral-muted hover:text-white" id="chat-drawer-close">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div class="p-3.5 flex flex-col gap-2.5 overflow-y-auto text-xs flex-1 max-h-72" id="chat-messages-container">
+      <div class="p-2.5 rounded-xl bg-lavender-50 border border-lavender/40 text-neutral-heading leading-relaxed">
+        👋 Hi! I'm your campus AI radar. Ask me about free food, upcoming deadlines, placement drives, or room venues!
+      </div>
+    </div>
+
+    <!-- Quick Prompt Chips -->
+    <div class="px-3 py-1.5 bg-neutral-canvas border-t border-neutral-border/60 flex items-center gap-1.5 overflow-x-auto text-[10px]">
+      <button class="chat-quick-chip whitespace-nowrap px-2 py-0.5 rounded-full bg-white border border-neutral-border hover:border-lavender text-neutral-heading">
+        🍕 Free food?
+      </button>
+      <button class="chat-quick-chip whitespace-nowrap px-2 py-0.5 rounded-full bg-white border border-neutral-border hover:border-lavender text-neutral-heading">
+        🚨 Deadlines tomorrow?
+      </button>
+      <button class="chat-quick-chip whitespace-nowrap px-2 py-0.5 rounded-full bg-white border border-neutral-border hover:border-lavender text-neutral-heading">
+        💼 Placements?
+      </button>
+    </div>
+
+    <!-- Input Form -->
+    <form class="p-2.5 border-t border-neutral-border flex items-center gap-1.5" id="chat-form">
+      <input type="text" id="chat-input" placeholder="Type a campus question..." class="flex-1 p-2 rounded-xl bg-neutral-canvas border border-neutral-border text-xs text-neutral-heading focus:outline-none focus:bg-white">
+      <button type="submit" class="p-2 rounded-xl bg-neutral-heading text-white hover:bg-neutral-body">
+        <span class="material-symbols-outlined text-[16px]">send</span>
+      </button>
+    </form>
+  </div>
+
   <!-- Friendly Toast Notification -->
   <div class="fixed bottom-6 right-6 max-w-sm bg-neutral-heading text-white p-4 rounded-2xl shadow-xl z-50 flex items-center gap-3 transform translate-y-32 opacity-0 transition-all duration-300 pointer-events-none" id="simple-toast">
     <div class="w-8 h-8 rounded-xl bg-lavender flex items-center justify-center text-lavender-dark font-bold shrink-0">
@@ -854,6 +1055,9 @@
   <script src="js/digest.js"></script>
   <script src="js/calendar.js"></script>
   <script src="js/analytics.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/gemini.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

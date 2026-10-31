@@ -1348,6 +1348,235 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#039;');
   }
 
+  // =========================================================================
+  // POSTER SCANNER OCR STUDIO
+  // =========================================================================
+  let scannerStudio = null;
+  const posterModal = document.getElementById('poster-scanner-modal');
+  const scannerCloseBtn = document.getElementById('scanner-close-btn');
+  const btnRunLaserScan = document.getElementById('btn-run-laser-scan');
+  const scannerStatusText = document.getElementById('scanner-status-text');
+
+  if (document.getElementById('poster-scanner-canvas')) {
+    scannerStudio = new PosterScannerStudio('poster-scanner-canvas');
+    scannerStudio.drawPoster();
+  }
+
+  // Open Poster Scanner Studio when clicking image upload trigger
+  const posterLabel = document.querySelector('label[title*="Poster Photo"]');
+  if (posterLabel && posterModal) {
+    posterLabel.onclick = (e) => {
+      e.preventDefault();
+      posterModal.classList.remove('hidden');
+      if (scannerStudio) scannerStudio.drawPoster();
+    };
+  }
+
+  if (scannerCloseBtn && posterModal) {
+    scannerCloseBtn.onclick = () => posterModal.classList.add('hidden');
+  }
+
+  // Poster Selector buttons inside Studio
+  document.querySelectorAll('.btn-select-poster').forEach(btn => {
+    btn.onclick = (e) => {
+      document.querySelectorAll('.btn-select-poster').forEach(b => {
+        b.classList.remove('bg-lavender-50', 'border-lavender/60', 'text-lavender-dark');
+        b.classList.add('bg-neutral-canvas', 'border-neutral-border', 'text-neutral-heading');
+      });
+      e.target.classList.remove('bg-neutral-canvas', 'border-neutral-border', 'text-neutral-heading');
+      e.target.classList.add('bg-lavender-50', 'border-lavender/60', 'text-lavender-dark');
+
+      const posterId = e.target.getAttribute('data-poster');
+      if (scannerStudio) scannerStudio.setPoster(posterId);
+    };
+  });
+
+  if (btnRunLaserScan && scannerStudio) {
+    btnRunLaserScan.onclick = () => {
+      scannerStatusText.textContent = "Scanning poster text with computer vision...";
+      btnRunLaserScan.disabled = true;
+
+      scannerStudio.startScan((extractedText) => {
+        btnRunLaserScan.disabled = false;
+        scannerStatusText.textContent = "OCR Complete! Text loaded into radar.";
+        posterModal.classList.add('hidden');
+
+        if (dropPasteText) {
+          dropPasteText.value = extractedText;
+          if (pasteCounter) pasteCounter.textContent = `${extractedText.length} chars`;
+        }
+        triggerToast("Poster Scanned!", "Text isolated with bounding boxes. Tap 'Clean & Add' to publish.");
+      });
+    };
+  }
+
+  // =========================================================================
+  // CONFLICT RESOLVER MODAL
+  // =========================================================================
+  const conflictModal = document.getElementById('conflict-resolver-modal');
+  const conflictCloseBtn = document.getElementById('conflict-close-btn');
+  const btnNotifyCoordinators = document.getElementById('btn-notify-coordinators');
+  const btnRescheduleConflict = document.getElementById('btn-reschedule-conflict');
+
+  if (conflictCloseBtn && conflictModal) {
+    conflictCloseBtn.onclick = () => conflictModal.classList.add('hidden');
+  }
+
+  // Re-wire conflict button to open modal
+  if (btnResolveConflict && conflictModal) {
+    btnResolveConflict.onclick = () => {
+      conflictModal.classList.remove('hidden');
+    };
+  }
+
+  if (btnNotifyCoordinators) {
+    btnNotifyCoordinators.onclick = () => {
+      conflictModal.classList.add('hidden');
+      triggerToast("Coordinators Alerted", "Automated email sent to Career TPO and Debate Club leads.");
+    };
+  }
+
+  if (btnRescheduleConflict) {
+    btnRescheduleConflict.onclick = () => {
+      // Find the conflicting notice and resolve it
+      notices = notices.map(n => {
+        if (n.hasConflict) {
+          return {
+            ...n,
+            hasConflict: false,
+            conflictDetails: '',
+            venue: 'Engineering Atrium (Exclusive)',
+            description: n.description + ' (Conflict resolved: Debate session relocated to Seminar Hall 2).'
+          };
+        }
+        return n;
+      });
+      StorageService.saveAllNotices(notices);
+      conflictModal.classList.add('hidden');
+      renderApp();
+      triggerToast("Conflict Resolved!", "Engineering Atrium booking confirmed exclusively for Career Gala.");
+    };
+  }
+
+  // =========================================================================
+  // GOOGLE GEMINI SETTINGS MODAL
+  // =========================================================================
+  const geminiModal = document.getElementById('gemini-settings-modal');
+  const btnGeminiSettings = document.getElementById('btn-gemini-settings');
+  const geminiCloseBtn = document.getElementById('gemini-close-btn');
+  const geminiCancelBtn = document.getElementById('gemini-cancel-btn');
+  const btnSaveGeminiKey = document.getElementById('btn-save-gemini-key');
+  const btnClearGeminiKey = document.getElementById('btn-clear-gemini-key');
+  const geminiApiKeyInput = document.getElementById('gemini-api-key-input');
+
+  if (btnGeminiSettings && geminiModal) {
+    btnGeminiSettings.onclick = () => {
+      if (geminiApiKeyInput) {
+        geminiApiKeyInput.value = GeminiService.getApiKey();
+      }
+      geminiModal.classList.remove('hidden');
+    };
+  }
+
+  function closeGeminiModal() {
+    geminiModal.classList.add('hidden');
+  }
+
+  if (geminiCloseBtn) geminiCloseBtn.onclick = closeGeminiModal;
+  if (geminiCancelBtn) geminiCancelBtn.onclick = closeGeminiModal;
+
+  if (btnSaveGeminiKey && geminiApiKeyInput) {
+    btnSaveGeminiKey.onclick = () => {
+      const key = geminiApiKeyInput.value.trim();
+      GeminiService.setApiKey(key);
+      closeGeminiModal();
+      triggerToast(key ? "Gemini 1.5 Flash Connected!" : "Gemini Disabled", key ? "Live Google LLM extraction active." : "Using built-in offline NLP engine.");
+    };
+  }
+
+  if (btnClearGeminiKey) {
+    btnClearGeminiKey.onclick = () => {
+      GeminiService.setApiKey('');
+      if (geminiApiKeyInput) geminiApiKeyInput.value = '';
+      closeGeminiModal();
+      triggerToast("Key Cleared", "Campus Pulse is running on instant offline NLP mode.");
+    };
+  }
+
+  // =========================================================================
+  // "ASK CAMPUS PULSE" CHAT ASSISTANT
+  // =========================================================================
+  const btnToggleChat = document.getElementById('btn-toggle-chat');
+  const chatDrawerModal = document.getElementById('chat-drawer-modal');
+  const chatDrawerClose = document.getElementById('chat-drawer-close');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const chatMessagesContainer = document.getElementById('chat-messages-container');
+
+  if (btnToggleChat && chatDrawerModal) {
+    btnToggleChat.onclick = () => {
+      chatDrawerModal.classList.toggle('hidden');
+      if (!chatDrawerModal.classList.contains('hidden') && chatInput) {
+        chatInput.focus();
+      }
+    };
+  }
+
+  if (chatDrawerClose && chatDrawerModal) {
+    chatDrawerClose.onclick = () => chatDrawerModal.classList.add('hidden');
+  }
+
+  // Quick Chips in Chat Drawer
+  document.querySelectorAll('.chat-quick-chip').forEach(chip => {
+    chip.onclick = (e) => {
+      const text = e.target.textContent.replace(/[🍕🚨💼\s]+/g, ' ').trim();
+      submitChatMessage(text);
+    };
+  });
+
+  if (chatForm && chatInput) {
+    chatForm.onsubmit = (e) => {
+      e.preventDefault();
+      const query = chatInput.value.trim();
+      if (!query) return;
+      chatInput.value = '';
+      submitChatMessage(query);
+    };
+  }
+
+  function submitChatMessage(query) {
+    if (!chatMessagesContainer) return;
+
+    // Append User Message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'p-2 rounded-xl bg-neutral-heading text-white self-end max-w-[85%] text-xs leading-relaxed';
+    userMsg.textContent = query;
+    chatMessagesContainer.appendChild(userMsg);
+
+    // Typing simulation indicator
+    const typing = document.createElement('div');
+    typing.className = 'p-2 rounded-xl bg-neutral-canvas text-neutral-muted text-xs italic';
+    typing.textContent = 'Campus Pulse is scanning notices...';
+    chatMessagesContainer.appendChild(typing);
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+    setTimeout(() => {
+      typing.remove();
+      const response = CampusChatAssistant.answer(query, notices);
+      const botMsg = document.createElement('div');
+      botMsg.className = 'p-2.5 rounded-xl bg-lavender-50 border border-lavender/40 text-neutral-heading text-xs leading-relaxed whitespace-pre-line';
+      botMsg.innerHTML = formatMarkdownChat(response.reply);
+      chatMessagesContainer.appendChild(botMsg);
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }, 450);
+  }
+
+  function formatMarkdownChat(text) {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>');
+  }
+
   function triggerToast(title, desc) {
     const toast = document.getElementById('simple-toast');
     const toastTitle = document.getElementById('toast-title');
