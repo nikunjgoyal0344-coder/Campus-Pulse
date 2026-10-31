@@ -149,6 +149,7 @@ const INITIAL_NOTICES = [
     dateTime: getDateOffset(1, 17, 30), // Tomorrow evening
     venue: 'Kemeny Hall Auditorium 108',
     perk: 'Free Artisanal Boba Drinks & Detroit Pizza after Q&A',
+    hasPerk: true,
     link: 'https://rsvp.college.edu/deepmind-talk',
     source: 'Forwarded from CS Class WhatsApp',
     rawText: `Hey everyone! Google DeepMind is hosting an exclusive campus talk tomorrow at 5:30 PM in Kemeny Hall Auditorium 108. Free artisanal boba & pizza served! RSVP here: https://rsvp.college.edu/deepmind-talk`,
@@ -183,6 +184,7 @@ const INITIAL_NOTICES = [
     dateTime: getDateOffset(4, 10, 0), // In 4 days
     venue: 'Maker Studio Hub (Room 204)',
     perk: '$6,000 Prize Pool + Free Weekend Meals',
+    hasPerk: true,
     link: 'https://designathon.college.edu/register',
     source: 'Design Club Instagram Caption',
     rawText: `Designathon 2026 is back! 48-Hour UI/UX sprint starting in 4 days at 10 AM. Free meals all weekend. Prizes worth $6,000. Register your team of 2-4 at https://designathon.college.edu/register`,

@@ -291,7 +291,8 @@ class NoticeExtractor {
    */
   static detectPerks(text) {
     const perkPatterns = [
-      /(?:free\s+(?:food|pizza|boba|drinks|bagels|meals|snacks|coffee|lunch|dinner|refreshments)[^\n\r.,!]*)/i,
+      /(?:free\s+(?:[a-z]+\s+)?(?:food|pizza|boba|drinks|bagels|meals|snacks|coffee|lunch|dinner|refreshments)[^\n\r.,!]*)/i,
+      /\b(?:artisanal\s+boba|detroit\s+pizza|free\s+pizza|free\s+boba|unlimited\s+coffee)\b/i,
       /(?:prize\s+pool\s*[:\-]?\s*[\$₹][0-9,]+[^\n\r.,!]*)/i,
       /(?:[\$₹][0-9,]+\s*(?:direct\s+stipend|term\s+award|cash\s+prize|scholarship))/i,
       /(?:free\s+t-shirts?|goodies|swag\s+kits?)/i

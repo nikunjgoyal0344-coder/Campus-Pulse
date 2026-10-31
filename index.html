@@ -235,6 +235,24 @@
         >
           <span class="material-symbols-outlined text-[19px]">settings_suggest</span>
         </button>
+
+        <!-- Keyboard Shortcuts Trigger -->
+        <button 
+          class="p-2 rounded-xl text-neutral-muted hover:text-neutral-heading hover:bg-neutral-canvas border border-neutral-border/70 transition-colors hidden sm:block" 
+          id="btn-open-shortcuts" 
+          title="Keyboard Shortcuts (?)"
+        >
+          <span class="material-symbols-outlined text-[19px]">keyboard</span>
+        </button>
+
+        <!-- 30s Guided Tour Trigger -->
+        <button 
+          class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-chartreuse hover:bg-chartreuse-DEFAULT_HOVER text-neutral-heading font-heading font-bold text-xs transition-all shadow-xs" 
+          id="btn-start-tour" 
+          title="Interactive 30-Second Guided Tour"
+        >
+          <span>✨ Tour</span>
+        </button>
       </div>
     </header>
 
@@ -1035,6 +1053,71 @@
         <span class="material-symbols-outlined text-[16px]">send</span>
       </button>
     </form>
+  </div>
+
+  <!-- MODAL 9: Keyboard Shortcuts Cheat Sheet -->
+  <div class="hidden fixed inset-0 bg-neutral-heading/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal-backdrop" id="shortcuts-modal">
+    <div class="bg-white rounded-3xl border border-neutral-border max-w-sm w-full p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-neutral-border/60 pb-2">
+        <h3 class="font-heading font-bold text-base text-neutral-heading flex items-center gap-2">
+          <span class="material-symbols-outlined text-[19px]">keyboard</span>
+          <span>Keyboard Shortcuts</span>
+        </h3>
+        <button class="p-1 rounded-lg hover:bg-neutral-canvas text-neutral-muted" id="shortcuts-close-btn">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-2 text-xs">
+        <div class="flex items-center justify-between py-1 border-b border-neutral-border/50">
+          <span class="text-neutral-muted">Focus Search Bar</span>
+          <kbd class="px-2 py-0.5 rounded bg-neutral-canvas border border-neutral-border font-mono font-bold text-neutral-heading">/</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1 border-b border-neutral-border/50">
+          <span class="text-neutral-muted">Open Weekly AI Digest</span>
+          <kbd class="px-2 py-0.5 rounded bg-neutral-canvas border border-neutral-border font-mono font-bold text-neutral-heading">D</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1 border-b border-neutral-border/50">
+          <span class="text-neutral-muted">Toggle Calendar / Feed</span>
+          <kbd class="px-2 py-0.5 rounded bg-neutral-canvas border border-neutral-border font-mono font-bold text-neutral-heading">C</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1 border-b border-neutral-border/50">
+          <span class="text-neutral-muted">Open "Ask Pulse" AI Assistant</span>
+          <kbd class="px-2 py-0.5 rounded bg-neutral-canvas border border-neutral-border font-mono font-bold text-neutral-heading">A</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1 border-b border-neutral-border/50">
+          <span class="text-neutral-muted">Toggle Dark / Light Theme</span>
+          <kbd class="px-2 py-0.5 rounded bg-neutral-canvas border border-neutral-border font-mono font-bold text-neutral-heading">T</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1">
+          <span class="text-neutral-muted">Close any Active Modal</span>
+          <kbd class="px-2 py-0.5 rounded bg-neutral-canvas border border-neutral-border font-mono font-bold text-neutral-heading">Esc</kbd>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUIDED TOUR STEP OVERLAY CARD -->
+  <div class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 max-w-md w-full bg-neutral-heading text-white p-5 rounded-3xl shadow-2xl z-50 flex flex-col gap-3 border border-chartreuse/60 animate-slide-up" id="tour-card">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-chartreuse animate-pulse"></span>
+        <span class="font-heading font-bold text-xs uppercase tracking-wider text-chartreuse" id="tour-step-badge">Tour Step 1 of 4</span>
+      </div>
+      <button class="text-xs text-neutral-400 hover:text-white" id="tour-btn-skip">Skip Tour ✕</button>
+    </div>
+    <div>
+      <h4 class="font-heading font-bold text-sm text-white" id="tour-title">Welcome to Campus Pulse</h4>
+      <p class="text-xs text-neutral-300 mt-1 leading-relaxed" id="tour-desc">
+        Your intelligent student radar. Turn chaotic WhatsApp forwards and poster photos into organized, prioritized cards in 1 click!
+      </p>
+    </div>
+    <div class="flex items-center justify-between pt-2 border-t border-neutral-700">
+      <button class="text-xs text-neutral-400 hover:text-white" id="tour-btn-prev">Back</button>
+      <button class="px-4 py-1.5 rounded-xl bg-chartreuse hover:bg-chartreuse-DEFAULT_HOVER text-neutral-heading font-heading font-bold text-xs transition-all shadow-sm" id="tour-btn-next">
+        Next Feature →
+      </button>
+    </div>
   </div>
 
   <!-- Friendly Toast Notification -->

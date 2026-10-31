@@ -1,5 +1,5 @@
 /**
- * Campus Pulse — Custom Styles, Dark Mode & Micro-Animations
+ * Campus Pulse — Custom Styles, Dark Mode, Micro-Animations & Print Styles
  */
 
 @layer base {
@@ -74,6 +74,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   }
 }
 
+/* Tour Spotlight Halo */
+.tour-highlight {
+  position: relative;
+  z-index: 60 !important;
+  box-shadow: 0 0 0 4px #D4FF3F, 0 0 30px rgba(74, 50, 107, 0.6) !important;
+  transition: all 0.3s ease;
+}
+
 /* Glassmorphism backdrop */
 .glass-panel {
   background: rgba(255, 255, 255, 0.85);
@@ -124,4 +132,23 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .dark .glass-panel {
   background: rgba(17, 24, 39, 0.88);
   backdrop-filter: blur(12px);
+}
+
+/* Printable Timetable Styles */
+@media print {
+  aside, header, #quick-drop, #btn-toggle-chat, .btn-download-ics, .btn-toggle-done, .btn-remind-me, .btn-share-notice, .btn-view-raw, .btn-delete-notice, #filter-chips, #sort-select, #btn-view-list, #btn-view-calendar, #status-pill-count {
+    display: none !important;
+  }
+  body, .pl-64, main {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    color: black !important;
+  }
+  .max-w-7xl {
+    max-width: 100% !important;
+  }
+  .lg\:col-span-8 {
+    width: 100% !important;
+  }
 }

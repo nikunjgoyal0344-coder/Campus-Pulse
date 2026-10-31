@@ -1577,6 +1577,125 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/\*(.*?)\*/g, '<em>$1</em>');
   }
 
+  // =========================================================================
+  // KEYBOARD SHORTCUTS ENGINE
+  // =========================================================================
+  const shortcutsModal = document.getElementById('shortcuts-modal');
+  const btnOpenShortcuts = document.getElementById('btn-open-shortcuts');
+  const shortcutsCloseBtn = document.getElementById('shortcuts-close-btn');
+
+  if (btnOpenShortcuts && shortcutsModal) {
+    btnOpenShortcuts.onclick = () => shortcutsModal.classList.remove('hidden');
+  }
+  if (shortcutsCloseBtn && shortcutsModal) {
+    shortcutsCloseBtn.onclick = () => shortcutsModal.classList.add('hidden');
+  }
+
+  window.addEventListener('keydown', (e) => {
+    // Ignore when typing inside input or textarea
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+    if (e.key === '?') {
+      e.preventDefault();
+      if (shortcutsModal) shortcutsModal.classList.toggle('hidden');
+    } else if (e.key === 'd' || e.key === 'D') {
+      e.preventDefault();
+      openWeeklyDigest('all');
+    } else if (e.key === 'c' || e.key === 'C') {
+      e.preventDefault();
+      setView(currentView === 'list' ? 'calendar' : 'list');
+    } else if (e.key === 'a' || e.key === 'A') {
+      e.preventDefault();
+      if (chatDrawerModal) chatDrawerModal.classList.toggle('hidden');
+    } else if (e.key === 't' || e.key === 'T') {
+      e.preventDefault();
+      const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+      applyTheme(next);
+      StorageService.setTheme(next);
+      triggerToast(next === 'dark' ? "Dark Mode Active" : "Light Mode Active", "Switched via keyboard shortcut (T).");
+    }
+  });
+
+  // =========================================================================
+  // INTERACTIVE 30-SECOND GUIDED TOUR
+  // =========================================================================
+  const tourCard = document.getElementById('tour-card');
+  const btnStartTour = document.getElementById('btn-start-tour');
+  const tourBtnSkip = document.getElementById('tour-btn-skip');
+  const tourBtnNext = document.getElementById('tour-btn-next');
+  const tourBtnPrev = document.getElementById('tour-btn-prev');
+  const tourStepBadge = document.getElementById('tour-step-badge');
+  const tourTitle = document.getElementById('tour-title');
+  const tourDesc = document.getElementById('tour-desc');
+
+  const tourSteps = [
+    {
+      targetId: 'quick-drop',
+      badge: 'Tour Step 1 of 4',
+      title: 'Smart Radar & Notice Ingestion',
+      desc: 'Paste messy WhatsApp forwards, emails, or click the camera icon to scan a notice board poster. AI isolates the dates, venues, and free food perks automatically.'
+    },
+    {
+      targetId: 'urgent-hero-shelf',
+      badge: 'Tour Step 2 of 4',
+      title: 'Needs Attention Today Shelf',
+      desc: 'Impending deadlines (< 24 hours) are pinned right here so you never miss a submission cutoff. Mark Done in 1 click!'
+    },
+    {
+      targetId: 'btn-weekly-digest-header',
+      badge: 'Tour Step 3 of 4',
+      title: 'AI Weekly Executive Digest',
+      desc: 'Click here anytime to get a short, readable briefing of your week. Listen via audio readout or copy a batch summary directly to WhatsApp.'
+    },
+    {
+      targetId: 'filter-chips',
+      badge: 'Tour Step 4 of 4',
+      title: 'Interactive Filters & Calendar',
+      desc: 'Filter by Free Food, Hackathons, or Deadlines. Toggle to Calendar view to see your month visually mapped out.'
+    }
+  ];
+
+  let currentTourStep = 0;
+
+  function showTourStep(index) {
+    // Remove existing highlights
+    document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+
+    if (index >= tourSteps.length) {
+      endTour();
+      triggerToast("Tour Complete! 🎓", "You are now ready to explore Campus Pulse.");
+      return;
+    }
+
+    currentTourStep = index;
+    const step = tourSteps[index];
+    tourStepBadge.textContent = step.badge;
+    tourTitle.textContent = step.title;
+    tourDesc.textContent = step.desc;
+
+    tourBtnPrev.style.display = index === 0 ? 'none' : 'block';
+    tourBtnNext.textContent = index === tourSteps.length - 1 ? 'Finish Tour ✓' : 'Next Feature →';
+
+    const target = document.getElementById(step.targetId);
+    if (target) {
+      target.classList.add('tour-highlight');
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    tourCard.classList.remove('hidden');
+  }
+
+  function endTour() {
+    document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+    if (tourCard) tourCard.classList.add('hidden');
+  }
+
+  if (btnStartTour) {
+    btnStartTour.onclick = () => showTourStep(0);
+  }
+  if (tourBtnSkip) tourBtnSkip.onclick = endTour;
+  if (tourBtnNext) tourBtnNext.onclick = () => showTourStep(currentTourStep + 1);
+  if (tourBtnPrev) tourBtnPrev.onclick = () => showTourStep(Math.max(0, currentTourStep - 1));
+
   function triggerToast(title, desc) {
     const toast = document.getElementById('simple-toast');
     const toastTitle = document.getElementById('toast-title');
