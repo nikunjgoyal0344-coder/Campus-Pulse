@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <defs>
+    <linearGradient id="cpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="60%" stop-color="#3525CD" />
+      <stop offset="100%" stop-color="#006E4B" />
+    </linearGradient>
+    <linearGradient id="pulseGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#67F4B7" />
+      <stop offset="50%" stop-color="#FEA619" />
+      <stop offset="100%" stop-color="#67F4B7" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Rounded App Tile -->
+  <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#cpGrad)" />
+  <rect x="2" y="2" width="44" height="44" rx="12" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="1.5" />
+
+  <!-- Graduation Cap Beacon Silhouette (Top) -->
+  <path d="M 24 10 L 35 15 L 24 20 L 13 15 Z" fill="#FFFFFF" fill-opacity="0.95" />
+  <path d="M 18 18.5 L 18 24.5 C 18 27.5 30 27.5 30 24.5 L 30 18.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" fill="none" />
+  <path d="M 33 16.5 L 35 22.5" stroke="#67F4B7" stroke-width="1.6" stroke-linecap="round" />
+  <circle cx="35" cy="23.5" r="1.2" fill="#67F4B7" />
+
+  <!-- Dynamic Campus Pulse Waveform (Bottom) -->
+  <path d="M 8 34 L 17 34 L 20 28 L 24 38 L 28 26 L 31 34 L 40 34" 
+        stroke="url(#pulseGlow)" 
+        stroke-width="2.8" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        filter="url(#glow)" />
+
+  <!-- Live Pulse Beacon Spark -->
+  <circle cx="28" cy="26" r="2.2" fill="#FFFFFF" />
+  <circle cx="28" cy="26" r="4" stroke="#67F4B7" stroke-width="1" stroke-opacity="0.7" />
+</svg>

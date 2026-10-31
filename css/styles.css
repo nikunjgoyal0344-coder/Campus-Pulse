@@ -162,10 +162,53 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
   overflow: hidden;
   opacity: 1;
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+}
+
+body.wallpaper-live,
+body.wallpaper-live main,
+body.wallpaper-live .bg-surface {
+  background-color: transparent !important;
+}
+
+body.wallpaper-plain,
+body.wallpaper-plain main {
+  background-color: var(--bg-surface, #f8f9ff) !important;
+}
+
+/* Semi-translucent glass cards in live wallpaper mode */
+body.wallpaper-live .bg-surface-container-lowest {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+body.wallpaper-live.dark .bg-surface-container-lowest,
+body.wallpaper-live .dark .bg-surface-container-lowest {
+  background-color: rgba(16, 28, 45, 0.85) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+body.wallpaper-live header {
+  background-color: rgba(248, 249, 255, 0.82) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+body.wallpaper-live.dark header,
+body.wallpaper-live .dark header {
+  background-color: rgba(11, 20, 32, 0.85) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .wallpaper-plain #liveWallpaperContainer {
@@ -188,43 +231,43 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 .orb-indigo {
-  width: 580px;
-  height: 580px;
+  width: 650px;
+  height: 650px;
   top: -10%;
-  left: -5%;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.28) 0%, rgba(53, 37, 205, 0.08) 55%, transparent 75%);
-  filter: blur(85px);
-  animation: orbDrift1 24s ease-in-out infinite alternate;
+  left: -8%;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.40) 0%, rgba(53, 37, 205, 0.16) 55%, transparent 75%);
+  filter: blur(75px);
+  animation: orbDrift1 22s ease-in-out infinite alternate;
 }
 
 .orb-amber {
-  width: 490px;
-  height: 490px;
-  bottom: 5%;
+  width: 550px;
+  height: 550px;
+  bottom: 0%;
   right: -5%;
-  background: radial-gradient(circle, rgba(254, 166, 25, 0.22) 0%, rgba(133, 83, 0, 0.06) 60%, transparent 75%);
-  filter: blur(90px);
-  animation: orbDrift2 28s ease-in-out infinite alternate;
+  background: radial-gradient(circle, rgba(254, 166, 25, 0.35) 0%, rgba(133, 83, 0, 0.12) 60%, transparent 75%);
+  filter: blur(80px);
+  animation: orbDrift2 26s ease-in-out infinite alternate;
 }
 
 .orb-emerald {
-  width: 440px;
-  height: 440px;
+  width: 500px;
+  height: 500px;
   top: 35%;
   left: 20%;
-  background: radial-gradient(circle, rgba(103, 244, 183, 0.24) 0%, rgba(0, 110, 75, 0.06) 55%, transparent 75%);
-  filter: blur(80px);
-  animation: orbDrift3 21s ease-in-out infinite alternate;
+  background: radial-gradient(circle, rgba(103, 244, 183, 0.36) 0%, rgba(0, 110, 75, 0.12) 55%, transparent 75%);
+  filter: blur(70px);
+  animation: orbDrift3 19s ease-in-out infinite alternate;
 }
 
 .orb-violet {
-  width: 520px;
-  height: 520px;
+  width: 600px;
+  height: 600px;
   top: 15%;
-  right: 15%;
-  background: radial-gradient(circle, rgba(195, 192, 255, 0.26) 0%, rgba(79, 70, 229, 0.08) 60%, transparent 75%);
-  filter: blur(95px);
-  animation: orbDrift4 26s ease-in-out infinite alternate;
+  right: 12%;
+  background: radial-gradient(circle, rgba(195, 192, 255, 0.38) 0%, rgba(79, 70, 229, 0.15) 60%, transparent 75%);
+  filter: blur(85px);
+  animation: orbDrift4 24s ease-in-out infinite alternate;
 }
 
 /* Dark Mode Vibrancy Boost */
