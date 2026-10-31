@@ -147,6 +147,73 @@ it('answers questions about urgent deadlines accurately', () => {
 });
 
 console.log('\n========================================');
+
+// 10. Security & Sanitization Tests (XSS Prevention & Protocol Safety)
+function escapeHTML(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function sanitizeUrl(url) {
+  if (!url) return '';
+  const trimmed = String(url).trim();
+  if (/^(https?:|\/|#|mailto:)/i.test(trimmed)) {
+    return encodeURI(trimmed).replace(/["'<>]/g, '');
+  }
+  return '#';
+}
+
+it('neutralizes malicious XSS script injection payloads', () => {
+  const maliciousTitle = '<script>alert("XSS")</script>Hackathon Announcement';
+  const sanitized = escapeHTML(maliciousTitle);
+  assert.ok(!sanitized.includes('<script>'));
+  assert.ok(sanitized.includes('&lt;script&gt;'));
+});
+
+it('neutralizes HTML event handler injections (img onerror)', () => {
+  const maliciousPrompt = 'Exam at <img src="x" onerror="stealCookies()"> Lab 4';
+  const sanitized = escapeHTML(maliciousPrompt);
+  assert.ok(!sanitized.includes('<img'));
+  assert.ok(sanitized.includes('&lt;img'));
+});
+
+it('blocks unsafe javascript: URLs and allows safe https: links', () => {
+  assert.strictEqual(sanitizeUrl('javascript:alert(document.cookie)'), '#');
+  assert.strictEqual(sanitizeUrl('data:text/html,<script>alert(1)</script>'), '#');
+  assert.strictEqual(sanitizeUrl('https://lms.college.edu/assignment'), 'https://lms.college.edu/assignment');
+  assert.strictEqual(sanitizeUrl('/portal/calendar'), '/portal/calendar');
+});
+
+// 11. Additional Campus Slang & Urgency Tests
+it('detects "parso" (day after tomorrow in Hindi) correctly', () => {
+  const res = NoticeExtractor.extractDateTime('Project presentation parso at 3 PM');
+  const d = new Date(res.dateTime);
+  const target = new Date();
+  target.setDate(target.getDate() + 2);
+  assert.strictEqual(d.getDate(), target.getDate());
+});
+
+it('detects hostel and facilities maintenance notices', () => {
+  const res = NoticeExtractor.classifyCategory('Notice from Chief Warden: Power backup & domestic water maintenance in hostel mess');
+  assert.ok(res.category === 'admin' || res.category === 'hostel');
+});
+
+it('accurately tags same-day deadlines as urgent', () => {
+  const isUrgent = NoticeExtractor.detectUrgency('CS189 Problem Set due today before midnight', new Date().toISOString());
+  assert.strictEqual(isUrgent, true);
+});
+
+it('safely handles empty or whitespace-only inputs without crashing', () => {
+  assert.throws(() => {
+    NoticeExtractor.extract('   ');
+  }, /Please paste a campus notice/);
+});
+
 console.log(`Results: ${passCount} Passed, ${failCount} Failed`);
 console.log('========================================\n');
 

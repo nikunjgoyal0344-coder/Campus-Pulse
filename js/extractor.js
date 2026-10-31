@@ -12,7 +12,7 @@ class NoticeExtractor {
    * @returns {Object} Extracted notice metadata with confidence scores
    */
   static extract(rawText, existingNotices = []) {
-    if (!rawText || typeof rawText !== 'string') {
+    if (!rawText || typeof rawText !== 'string' || !rawText.trim()) {
       throw new Error('Please paste a campus notice or announcement first.');
     }
 

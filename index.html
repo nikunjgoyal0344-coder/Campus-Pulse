@@ -199,6 +199,10 @@
 <span class="material-symbols-outlined text-[18px] text-secondary">add_circle</span>
 <span>Add Manually</span>
 </button>
+<button class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-primary-container px-4 py-2 font-label-md text-label-md text-white hover:opacity-95 active:scale-95 transition-all cursor-pointer shadow-sm hover:shadow-md" id="whatDoINeedToKnowBtn" type="button" aria-label="What do I need to know this week? Generate AI Weekly Digest">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed animate-pulse">auto_awesome</span>
+<span class="font-semibold">What do I need to know this week?</span>
+</button>
 <span class="ml-auto font-label-sm text-label-sm text-outline hidden md:inline">Auto-categorizes Course #, Deadlines &amp; Weight</span>
 </div>
 <!-- Parse Success Toast (Simulated via JS) -->
@@ -504,10 +508,12 @@
 <!-- Filter Tabs -->
 <div class="flex flex-wrap items-center gap-1.5 rounded-xl bg-surface-container-high p-1 shadow-inner" id="filterTabs">
 <button class="tab-btn rounded-lg bg-surface-container-lowest px-3 py-1.5 font-label-md text-label-md text-primary shadow-sm transition-all duration-200 cursor-pointer active:scale-95" data-filter="all" type="button">All (7)</button>
+<button class="tab-btn rounded-lg px-3 py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all duration-200 cursor-pointer active:scale-95" data-filter="urgent" type="button">🔴 Needs Attention Today</button>
 <button class="tab-btn rounded-lg px-3 py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all duration-200 cursor-pointer active:scale-95" data-filter="deadlines" type="button">Deadlines</button>
 <button class="tab-btn rounded-lg px-3 py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all duration-200 cursor-pointer active:scale-95" data-filter="lectures" type="button">Lectures</button>
 <button class="tab-btn rounded-lg px-3 py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all duration-200 cursor-pointer active:scale-95" data-filter="social" type="button">Social &amp; Clubs</button>
 <button class="tab-btn rounded-lg px-3 py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all duration-200 cursor-pointer active:scale-95" data-filter="career" type="button">Career</button>
+<button class="tab-btn rounded-lg px-3 py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all duration-200 cursor-pointer active:scale-95" data-filter="expired" type="button">Expired / Archive</button>
 </div>
 </div>
 <!-- Cards Grid -->
@@ -999,14 +1005,30 @@
         tab.classList.remove('text-on-surface-variant');
 
         const filter = tab.getAttribute('data-filter');
+        const urgentCards = document.querySelectorAll('#urgentTasksList .task-card');
+
         weeklyCards.forEach(card => {
           const category = card.getAttribute('data-category');
-          if (filter === 'all' || category === filter) {
+          if (filter === 'all' || category === filter || (filter === 'urgent' && category === 'deadlines')) {
             card.style.display = 'flex';
             card.classList.add('animate-enter');
             setTimeout(() => card.classList.remove('animate-enter'), 500);
           } else {
             card.style.display = 'none';
+          }
+        });
+
+        urgentCards.forEach(card => {
+          const isDone = card.querySelector('.complete-btn')?.classList.contains('is-checked') || card.getAttribute('data-expired') === 'true';
+          if (filter === 'expired') {
+            card.style.display = isDone ? '' : 'none';
+          } else if (filter === 'urgent') {
+            card.style.display = !isDone ? '' : 'none';
+          } else if (filter === 'all') {
+            card.style.display = '';
+          } else {
+            const cat = (card.getAttribute('data-category') || card.innerText || '').toLowerCase();
+            card.style.display = cat.includes(filter) ? '' : 'none';
           }
         });
       });

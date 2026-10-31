@@ -13,6 +13,26 @@
     hostel: `Notice from Chief Warden Office:\nPlease note that power backup and domestic water line servicing will take place Today from 2 PM to 5 PM across Boys Hostel A, B, C and Central Mess. Please plan your work accordingly. Contact Ext: 4012 for emergencies.`
   };
 
+  // Security Sanitization Helpers (XSS Prevention & Safe Protocols)
+  function escapeHTML(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function sanitizeUrl(url) {
+    if (!url) return '';
+    const trimmed = String(url).trim();
+    if (/^(https?:|\/|#|mailto:)/i.test(trimmed)) {
+      return encodeURI(trimmed).replace(/["'<>]/g, '');
+    }
+    return '#';
+  }
+
   // Helper to generate Google Calendar URL
   function makeGCalUrl(title, venue, details, timeStr) {
     const encTitle = encodeURIComponent(title || 'Campus Event');
@@ -124,7 +144,7 @@
         feedbackToast.classList.remove('hidden');
         feedbackToast.classList.add('animate-enter');
         if (feedbackText) {
-          feedbackText.innerHTML = `Extracted 1 priority notice for <strong class="font-bold">${extracted.title.slice(0, 30)}</strong>. Added to your queue below!`;
+          feedbackText.innerHTML = `Extracted 1 priority notice for <strong class="font-bold">${escapeHTML(extracted.title.slice(0, 30))}</strong>. Added to your queue below!`;
         }
       }
 
@@ -140,41 +160,65 @@
     }, 850);
   }
 
-  // 3. Dynamically Append Structured Task Card
-  function appendTaskCard(notice) {
+  // 3. Dynamically Append Structured Task Card (XSS-Safe & Sanitized)
+  function appendTaskCard(notice, shouldSave = true) {
     const urgentList = document.getElementById('urgentTasksList');
     if (!urgentList) return;
 
+    const safeTitle = escapeHTML(notice.title || 'Campus Notice');
+    const safeDesc = escapeHTML(notice.description || 'Details extracted from campus notice.');
+    const safeCategory = escapeHTML(notice.category || 'Academics');
+    const safeVenue = escapeHTML(notice.venue || 'Campus');
+    const safeDisplayTime = escapeHTML(notice.displayTime || 'Today');
+    const safeRawText = escapeHTML(notice.rawText || notice.description || '');
+    const safeLink = sanitizeUrl(notice.link);
+
     const gcalUrl = makeGCalUrl(notice.title, notice.venue, notice.description, notice.displayTime);
-    const cardId = 'task_' + Date.now();
+    const cardId = 'task_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
 
     const card = document.createElement('article');
     card.className = 'task-card interactive-card group relative overflow-hidden rounded-xl bg-surface-container-lowest p-5 shadow-sm animate-enter border border-outline-variant/15';
     card.setAttribute('data-task-id', cardId);
+    card.setAttribute('data-category', safeCategory.toLowerCase());
 
-    const isUrgent = notice.isUrgent !== false;
-    const badgeColor = isUrgent ? 'bg-secondary-fixed text-on-secondary-fixed' : 'bg-primary-fixed text-on-primary-fixed';
-    const tagText = isUrgent ? 'Due Today' : 'Upcoming';
+    const isExpired = notice.isExpired === true;
+    const isUrgent = !isExpired && (notice.isUrgent !== false);
+    card.setAttribute('data-urgent', isUrgent ? 'true' : 'false');
+    card.setAttribute('data-expired', isExpired ? 'true' : 'false');
+
+    let badgeColor = 'bg-primary-fixed text-on-primary-fixed';
+    let tagText = 'Upcoming';
+    let borderAccent = 'bg-primary-container';
+
+    if (isExpired) {
+      badgeColor = 'bg-surface-container-high text-on-surface-variant';
+      tagText = 'Expired / Past';
+      borderAccent = 'bg-outline-variant';
+    } else if (isUrgent) {
+      badgeColor = 'bg-secondary-fixed text-on-secondary-fixed';
+      tagText = 'Due Today';
+      borderAccent = 'bg-secondary-container';
+    }
 
     card.innerHTML = `
-      <div class="absolute left-0 top-0 bottom-0 w-1.5 ${isUrgent ? 'bg-secondary-container' : 'bg-primary-container'} transition-all group-hover:w-2"></div>
+      <div class="absolute left-0 top-0 bottom-0 w-1.5 ${borderAccent} transition-all group-hover:w-2"></div>
       <div class="pl-3 flex flex-col gap-3">
         <div class="flex flex-wrap items-start justify-between gap-2">
           <div class="flex flex-wrap items-center gap-2">
             <span class="rounded-full ${badgeColor} px-2.5 py-0.5 font-label-sm text-label-sm font-semibold">${tagText}</span>
-            <span class="rounded-full bg-surface-container-high px-2.5 py-0.5 font-label-sm text-label-sm text-on-surface-variant">${notice.category || 'Academics'}</span>
-            <span class="rounded-full bg-surface-container-high px-2.5 py-0.5 font-label-sm text-label-sm text-on-surface-variant">${notice.venue || 'Campus'}</span>
+            <span class="rounded-full bg-surface-container-high px-2.5 py-0.5 font-label-sm text-label-sm text-on-surface-variant">${safeCategory}</span>
+            <span class="rounded-full bg-surface-container-high px-2.5 py-0.5 font-label-sm text-label-sm text-on-surface-variant">${safeVenue}</span>
           </div>
           <div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
             <span class="material-symbols-outlined text-[16px] text-secondary">alarm</span>
-            <span>${notice.displayTime || 'Today'}</span>
+            <span>${safeDisplayTime}</span>
           </div>
         </div>
 
         <div class="flex items-start justify-between gap-4">
           <div class="flex flex-col gap-1 flex-1">
-            <h4 class="font-title-sm text-title-sm text-on-surface font-semibold task-title transition-all">${notice.title}</h4>
-            <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">${notice.description || 'Details extracted from campus notice.'}</p>
+            <h4 class="font-title-sm text-title-sm text-on-surface font-semibold task-title transition-all">${safeTitle}</h4>
+            <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">${safeDesc}</p>
           </div>
           <button type="button" aria-label="Mark task done" class="complete-btn relative h-7 w-7 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-transparent flex items-center justify-center transition-all shrink-0 cursor-pointer" title="Mark as done">
             <span class="material-symbols-outlined text-[18px]">check</span>
@@ -188,7 +232,7 @@
               <span class="material-symbols-outlined text-[14px]">event_upcoming</span>
               <span>+ Google Cal</span>
             </a>
-            ${notice.link ? `<a href="${notice.link}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-tertiary hover:underline font-label-sm"><span class="material-symbols-outlined text-[14px]">link</span><span>Portal Link</span></a>` : ''}
+            ${safeLink && safeLink !== '#' ? `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-tertiary hover:underline font-label-sm"><span class="material-symbols-outlined text-[14px]">link</span><span>Portal Link</span></a>` : ''}
           </div>
           <button type="button" class="drawer-toggle flex items-center gap-1 font-label-sm text-on-surface-variant hover:text-on-surface cursor-pointer">
             <span>Raw Notice</span>
@@ -200,7 +244,7 @@
         <div class="accordion-wrapper">
           <div class="accordion-inner pt-2">
             <div class="rounded-lg bg-surface-container-low p-3 font-mono text-[11px] text-on-surface-variant whitespace-pre-wrap select-all border border-outline-variant/20">
-              ${(notice.rawText || notice.description || '').replace(/</g, '&lt;')}
+              ${safeRawText}
             </div>
           </div>
         </div>
@@ -212,6 +256,10 @@
     // Bind Interactions on New Card
     bindCardInteractions(card);
     updateTotalTaskCount();
+
+    if (shouldSave) {
+      saveCustomTasks();
+    }
   }
 
   // 4. Bind Checkmark Particle Burst & Drawer Expansion on Cards
@@ -230,6 +278,7 @@
           completeBtn.classList.remove('bg-surface-container-high', 'text-transparent');
           if (title) title.classList.add('line-through', 'opacity-50');
           card.classList.add('opacity-75');
+          card.setAttribute('data-expired', 'true');
           createBurst(completeBtn);
           setTimeout(() => completeBtn.classList.remove('check-pop'), 400);
         } else {
@@ -237,8 +286,10 @@
           completeBtn.classList.add('bg-surface-container-high', 'text-transparent');
           if (title) title.classList.remove('line-through', 'opacity-50');
           card.classList.remove('opacity-75');
+          card.setAttribute('data-expired', 'false');
         }
         updateTotalTaskCount();
+        saveCustomTasks();
       });
     }
 
@@ -582,6 +633,228 @@
     }
   }
 
+  // 11. What Do I Need To Know This Week? — Interactive AI Weekly Digest Modal
+  function setupWeeklyDigestModal() {
+    const triggerBtn = document.getElementById('whatDoINeedToKnowBtn');
+    if (!triggerBtn || document.getElementById('weeklyDigestModalDialog')) return;
+
+    const modal = document.createElement('div');
+    modal.id = 'weeklyDigestModalDialog';
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'weeklyDigestTitle');
+
+    modal.innerHTML = `
+      <div class="relative w-full max-w-2xl rounded-2xl bg-surface-container-lowest p-6 shadow-2xl border border-outline-variant/20 flex flex-col gap-5 animate-enter max-h-[90vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/15">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shadow-xs">
+              <span class="material-symbols-outlined text-[20px] animate-pulse">auto_awesome</span>
+            </div>
+            <div>
+              <h3 id="weeklyDigestTitle" class="font-headline-sm text-title-md text-on-surface font-bold tracking-tight">What You Need To Know This Week</h3>
+              <p class="font-body-sm text-xs text-on-surface-variant">Intelligent executive brief synthesized from campus notices</p>
+            </div>
+          </div>
+          <button type="button" id="closeWeeklyDigestModal" aria-label="Close Weekly Digest" class="w-8 h-8 rounded-lg hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+
+        <!-- Audio Briefing Bar -->
+        <div class="flex items-center justify-between p-3.5 rounded-xl bg-primary-fixed/20 border border-primary/30 flex-wrap gap-3">
+          <div class="flex items-center gap-3">
+            <button type="button" id="digestVoicePlayBtn" class="h-9 px-3.5 rounded-lg bg-primary text-on-primary flex items-center gap-1.5 font-label-md shadow-sm hover:opacity-90 active:scale-95 transition-all cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]" id="digestVoiceIcon">volume_up</span>
+              <span id="digestVoiceLabel">Listen to Briefing</span>
+            </button>
+            <div id="digestEqWave" class="hidden items-end gap-1 h-5">
+              <span class="w-1 bg-primary rounded-full animate-bounce" style="height: 60%; animation-delay: 0.1s"></span>
+              <span class="w-1 bg-primary rounded-full animate-bounce" style="height: 100%; animation-delay: 0.25s"></span>
+              <span class="w-1 bg-primary rounded-full animate-bounce" style="height: 75%; animation-delay: 0.15s"></span>
+              <span class="w-1 bg-primary rounded-full animate-bounce" style="height: 90%; animation-delay: 0.3s"></span>
+            </div>
+          </div>
+          <button type="button" id="digestCopyWhatsAppBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-sm border border-outline-variant/20 transition-all cursor-pointer active:scale-95">
+            <span class="material-symbols-outlined text-[16px] text-tertiary">share</span>
+            <span>Copy WhatsApp Digest</span>
+          </button>
+        </div>
+
+        <!-- Digest Content Sections -->
+        <div class="flex flex-col gap-4 text-body-sm text-on-surface">
+          <!-- Section 1: Urgent Today -->
+          <div class="p-4 rounded-xl bg-secondary-fixed/15 border border-secondary-fixed flex flex-col gap-2">
+            <div class="flex items-center gap-2 text-secondary font-semibold font-label-md">
+              <span class="material-symbols-outlined text-[18px]">warning</span>
+              <span>Needs Attention Today (Top Priorities)</span>
+            </div>
+            <ul class="list-disc list-inside text-xs space-y-1 text-on-surface-variant">
+              <li><strong>CS 189 Midterm Problem Set 4:</strong> Submit PDF write-up & code to Gradescope by 11:59 PM sharp.</li>
+              <li><strong>Biology Lab 104 Sign-off:</strong> Mandatory TA physical notebook sign-off at Barker Hall 202 before 5:00 PM.</li>
+              <li><strong>MATH 54 Cram Session:</strong> Group session confirmed at Moffitt Library Pod 12 from 7:30 PM.</li>
+            </ul>
+          </div>
+
+          <!-- Section 2: This Week's Midterms & Deadlines -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-2">
+            <div class="flex items-center gap-2 text-primary font-semibold font-label-md">
+              <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+              <span>Upcoming This Week</span>
+            </div>
+            <ul class="list-disc list-inside text-xs space-y-1 text-on-surface-variant">
+              <li><strong>Thursday 2:00 PM:</strong> CS 189 Midterm Exam 1 in Pimentel Hall (1 two-sided cheat sheet allowed).</li>
+              <li><strong>Friday 9:00 AM:</strong> DevSoc HACKCAMPUS 2026 starts at Main Audi & Innovation Hub (₹1.5L Prize Pool).</li>
+              <li><strong>Sunday 2:30 PM:</strong> Google & Microsoft Pre-Placement PPT & Assessment at Seminar Hall 1.</li>
+            </ul>
+          </div>
+
+          <!-- Section 3: Campus Perks & Food Radar -->
+          <div class="p-4 rounded-xl bg-tertiary-fixed/20 border border-tertiary-fixed flex flex-col gap-2">
+            <div class="flex items-center gap-2 text-tertiary font-semibold font-label-md">
+              <span class="material-symbols-outlined text-[18px]">local_pizza</span>
+              <span>Perks & Free Food Radar</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">
+              🍕 <strong>Free Artisanal Pizza & Boba:</strong> Robotics Club Social this afternoon at Engineering Quad.<br>
+              🎒 <strong>Schwag Packs:</strong> Exclusive GitHub & DevSoc starter backpacks for all registered hackathon teams.
+            </p>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-between pt-3 border-t border-outline-variant/15 flex-wrap gap-2">
+          <a href="ai-digest.html" class="inline-flex items-center gap-1.5 text-xs text-primary font-semibold hover:underline">
+            <span>Explore Full AI Audio Briefing Studio</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </a>
+          <button type="button" id="closeWeeklyDigestBtn" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md font-semibold cursor-pointer">
+            Done
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const openModal = () => {
+      modal.classList.remove('hidden');
+    };
+    const closeModal = () => {
+      modal.classList.add('hidden');
+      if (window.speechSynthesis && window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        resetVoiceUI();
+      }
+    };
+
+    triggerBtn.addEventListener('click', openModal);
+    document.getElementById('closeWeeklyDigestModal')?.addEventListener('click', closeModal);
+    document.getElementById('closeWeeklyDigestBtn')?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    // Web Speech Briefing Audio
+    const voiceBtn = document.getElementById('digestVoicePlayBtn');
+    const voiceLabel = document.getElementById('digestVoiceLabel');
+    const voiceIcon = document.getElementById('digestVoiceIcon');
+    const eqWave = document.getElementById('digestEqWave');
+
+    function resetVoiceUI() {
+      if (voiceLabel) voiceLabel.textContent = 'Listen to Briefing';
+      if (voiceIcon) voiceIcon.textContent = 'volume_up';
+      if (eqWave) {
+        eqWave.classList.add('hidden');
+        eqWave.classList.remove('flex');
+      }
+    }
+
+    if (voiceBtn) {
+      voiceBtn.addEventListener('click', () => {
+        if (!('speechSynthesis' in window)) {
+          alert('Speech synthesis is not supported on this browser.');
+          return;
+        }
+
+        if (window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
+          resetVoiceUI();
+          return;
+        }
+
+        const speechText = "Good morning! Here is what you need to know this week on Campus Pulse. Your top urgent priorities today are: submit CS 189 Problem Set 4 by eleven fifty-nine PM, complete the Biology Lab notebook sign-off before five PM, and join the Math 54 study session at seven thirty PM. Coming up on Thursday, you have CS 189 Midterm One at Pimentel Hall. On Friday, DevSoc Hack Campus kicks off with free pizza and schwag. Have a productive week!";
+        const utterance = new SpeechSynthesisUtterance(speechText);
+        utterance.rate = 1.05;
+        utterance.pitch = 1.0;
+
+        utterance.onstart = () => {
+          if (voiceLabel) voiceLabel.textContent = 'Pause Briefing';
+          if (voiceIcon) voiceIcon.textContent = 'pause';
+          if (eqWave) {
+            eqWave.classList.remove('hidden');
+            eqWave.classList.add('flex');
+          }
+        };
+
+        utterance.onend = resetVoiceUI;
+        utterance.onerror = resetVoiceUI;
+
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    // Copy to WhatsApp
+    const copyBtn = document.getElementById('digestCopyWhatsAppBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const text = `📢 *CAMPUS PULSE — WEEKLY BRIEFING*\n\n🚨 *TODAY'S URGENT:*\n• CS 189 PS4 due 11:59 PM (Gradescope)\n• Bio Lab sign-off by 5:00 PM (Barker 202)\n• Math 54 Study Group 7:30 PM (Moffitt Pod 12)\n\n📅 *UPCOMING THIS WEEK:*\n• Thu 2 PM: CS 189 Midterm Exam 1 (Pimentel 1)\n• Fri 9 AM: DevSoc HackCampus (Main Audi)\n• Sun 2:30 PM: Google & MSFT PPT (Seminar Hall 1)\n\n🍕 *FREE FOOD:*\n• Pizza & Boba at Robotics Social today!\n\n_Generated via Campus Pulse Radar_`;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text);
+          const orig = copyBtn.innerHTML;
+          copyBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] text-tertiary">check</span><span>Copied to WhatsApp!</span>';
+          setTimeout(() => { copyBtn.innerHTML = orig; }, 2000);
+        }
+      });
+    }
+  }
+
+  // 12. Persistent Custom Tasks in LocalStorage
+  const STORAGE_TASKS_KEY = 'campus_pulse_custom_tasks';
+
+  function saveCustomTasks() {
+    try {
+      const cards = document.querySelectorAll('#urgentTasksList .task-card');
+      const data = Array.from(cards).map(c => {
+        const title = c.querySelector('.task-title')?.textContent?.trim() || '';
+        const desc = c.querySelector('p')?.textContent?.trim() || '';
+        const badges = c.querySelectorAll('.rounded-full');
+        const category = badges[1]?.textContent?.trim() || 'Academics';
+        const venue = badges[2]?.textContent?.trim() || 'Campus';
+        const displayTime = c.querySelector('.material-symbols-outlined.text-secondary + span')?.textContent?.trim() || 'Today';
+        const isDone = c.querySelector('.complete-btn')?.classList.contains('is-checked') || false;
+        const rawText = c.querySelector('.accordion-inner div')?.textContent?.trim() || '';
+        const isUrgent = c.getAttribute('data-urgent') !== 'false';
+        const isExpired = c.getAttribute('data-expired') === 'true';
+        return { title, description: desc, category, venue, displayTime, rawText, isCompleted: isDone, isUrgent, isExpired };
+      });
+      localStorage.setItem(STORAGE_TASKS_KEY, JSON.stringify(data.slice(0, 20)));
+    } catch (e) {}
+  }
+
+  function loadSavedCustomTasks() {
+    try {
+      const raw = localStorage.getItem(STORAGE_TASKS_KEY);
+      if (!raw) return;
+      const tasks = JSON.parse(raw);
+      if (Array.isArray(tasks) && tasks.length > 0) {
+        const urgentList = document.getElementById('urgentTasksList');
+        if (urgentList) urgentList.innerHTML = '';
+        tasks.reverse().forEach(task => appendTaskCard(task, false));
+      }
+    } catch (e) {}
+  }
+
   // Initialize all live enhancements
   function run() {
     injectPresets();
@@ -589,7 +862,9 @@
     setupManualAddModal();
     setupNotificationDropdown();
     setupProfileSwitcher();
+    setupWeeklyDigestModal();
     hookParseButton();
+    loadSavedCustomTasks();
 
     // Bind any existing cards
     document.querySelectorAll('#urgentTasksList .task-card').forEach(card => {

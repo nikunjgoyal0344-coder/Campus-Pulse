@@ -72,10 +72,26 @@
       });
     }
 
+    let isRunning = false;
+
+    function stopAnimation() {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      isRunning = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function startAnimation() {
+      if (isRunning || document.body.classList.contains('wallpaper-plain') || document.hidden) return;
+      isRunning = true;
+      animate();
+    }
+
     function animate() {
-      if (document.body.classList.contains('wallpaper-plain')) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        animationFrameId = requestAnimationFrame(animate);
+      if (!isRunning || document.body.classList.contains('wallpaper-plain') || document.hidden) {
+        stopAnimation();
         return;
       }
 
@@ -129,7 +145,21 @@
       animationFrameId = requestAnimationFrame(animate);
     }
 
-    animate();
+    // Power-saving tab visibility listener
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAnimation();
+      } else {
+        startAnimation();
+      }
+    });
+
+    window.CampusWallpaperCanvas = {
+      start: startAnimation,
+      stop: stopAnimation
+    };
+
+    startAnimation();
   }
 
   // 3. Wallpaper Mode Management (Live vs Plain)
@@ -146,9 +176,11 @@
     if (mode === 'plain') {
       document.body.classList.remove('wallpaper-live');
       document.body.classList.add('wallpaper-plain');
+      if (window.CampusWallpaperCanvas) window.CampusWallpaperCanvas.stop();
     } else {
       document.body.classList.remove('wallpaper-plain');
       document.body.classList.add('wallpaper-live');
+      if (window.CampusWallpaperCanvas) window.CampusWallpaperCanvas.start();
     }
 
     try {
