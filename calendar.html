@@ -806,6 +806,30 @@
     const toastIcon = document.getElementById('toastIcon');
     let toastTimeout;
 
+
+    // Synchronize Custom Notices from Campus Pulse Radar
+    try {
+      const raw = localStorage.getItem('campus_pulse_custom_tasks');
+      if (raw) {
+        const tasks = JSON.parse(raw);
+        if (Array.isArray(tasks) && tasks.length > 0) {
+          const activeCell = document.querySelector('.day-cell[data-day="15"]');
+          if (activeCell) {
+            tasks.slice(0, 2).forEach(task => {
+              const pill = document.createElement('div');
+              pill.className = 'day-event-pill group relative flex items-center justify-between p-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant/15 text-xs text-on-surface shadow-2xs hover:shadow-xs transition-all cursor-pointer';
+              const safeTitle = (task.title || 'Notice').replace(/</g, '&lt;');
+              pill.innerHTML = '<span class="truncate font-medium">' + safeTitle + '</span><span class="h-2 w-2 rounded-full bg-secondary-container shrink-0"></span>';
+              activeCell.appendChild(pill);
+            });
+            setTimeout(() => {
+              showToast('Synchronized ' + tasks.length + ' radar notices with academic calendar!', 'sync');
+            }, 500);
+          }
+        }
+      }
+    } catch (e) {}
+
     function showToast(message, icon = 'check_circle') {
       if (!toast) return;
       if (toastTimeout) clearTimeout(toastTimeout);

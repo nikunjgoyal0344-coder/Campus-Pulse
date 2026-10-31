@@ -214,6 +214,34 @@ it('safely handles empty or whitespace-only inputs without crashing', () => {
   }, /Please paste a campus notice/);
 });
 
+
+it('answers questions about placement drives and hackathons accurately', () => {
+  const res1 = CampusChatAssistant.answer('Any placement drives or company talks?', INITIAL_NOTICES);
+  assert.ok(res1.reply.includes('Google') || res1.reply.includes('Microsoft') || res1.reply.includes('placement'));
+
+  const res2 = CampusChatAssistant.answer('Tell me about upcoming hackathons', INITIAL_NOTICES);
+  assert.ok(res2.reply.includes('DeepMind') || res2.reply.includes('Workshop') || res2.reply.includes('tech') || res2.reply.includes('hackathon'));
+});
+
+it('guarantees extraction of all 5 core requirements: title, date, time, venue, category', () => {
+  const sample = `*Forwarded*\nSubject: CS 280 Computer Vision Midterm Exam\nDate: Tomorrow at 4:30 PM\nVenue: Pimentel Hall 101\nAttendance is compulsory for grading.`;
+  const result = NoticeExtractor.extract(sample);
+  assert.ok(result.title && result.title.length > 3, 'Must have title');
+  assert.ok(result.displayDate, 'Must have date');
+  assert.ok(result.displayTime, 'Must have time');
+  assert.ok(result.venue, 'Must have venue');
+  assert.ok(result.category, 'Must have category');
+});
+
+it('detects duplicate notices to prevent campus schedule clutter', () => {
+  const existing = [{
+    title: 'CS 189 Problem Set 4',
+    displayDate: formatDateString(new Date().toISOString())
+  }];
+  const isDupe = NoticeExtractor.detectDuplicate('CS 189 Problem Set 4', formatDateString(new Date().toISOString()), existing);
+  assert.ok(isDupe !== null, 'Must flag duplicate notice');
+});
+
 console.log(`Results: ${passCount} Passed, ${failCount} Failed`);
 console.log('========================================\n');
 

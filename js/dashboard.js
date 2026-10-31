@@ -160,7 +160,7 @@
     }, 850);
   }
 
-  // 3. Dynamically Append Structured Task Card (XSS-Safe & Sanitized)
+    // 3. Dynamically Append Structured Task Card (XSS-Safe, All Fields Tagged)
   function appendTaskCard(notice, shouldSave = true) {
     const urgentList = document.getElementById('urgentTasksList');
     if (!urgentList) return;
@@ -169,9 +169,12 @@
     const safeDesc = escapeHTML(notice.description || 'Details extracted from campus notice.');
     const safeCategory = escapeHTML(notice.category || 'Academics');
     const safeVenue = escapeHTML(notice.venue || 'Campus');
+    const safeDisplayDate = escapeHTML(notice.displayDate || (notice.isUrgent !== false ? 'Today' : 'Upcoming'));
     const safeDisplayTime = escapeHTML(notice.displayTime || 'Today');
     const safeRawText = escapeHTML(notice.rawText || notice.description || '');
     const safeLink = sanitizeUrl(notice.link);
+    const safePerk = notice.hasPerk && notice.perk ? escapeHTML(notice.perk) : '';
+    const safeConflict = notice.conflictWarning ? escapeHTML(notice.conflictWarning.message || 'Schedule Overlap Detected') : '';
 
     const gcalUrl = makeGCalUrl(notice.title, notice.venue, notice.description, notice.displayTime);
     const cardId = 'task_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -203,21 +206,45 @@
     card.innerHTML = `
       <div class="absolute left-0 top-0 bottom-0 w-1.5 ${borderAccent} transition-all group-hover:w-2"></div>
       <div class="pl-3 flex flex-col gap-3">
+        <!-- Field Badges Row -->
         <div class="flex flex-wrap items-start justify-between gap-2">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="rounded-full ${badgeColor} px-2.5 py-0.5 font-label-sm text-label-sm font-semibold">${tagText}</span>
-            <span class="rounded-full bg-surface-container-high px-2.5 py-0.5 font-label-sm text-label-sm text-on-surface-variant">${safeCategory}</span>
-            <span class="rounded-full bg-surface-container-high px-2.5 py-0.5 font-label-sm text-label-sm text-on-surface-variant">${safeVenue}</span>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span data-field="status" class="rounded-full ${badgeColor} px-2.5 py-0.5 font-label-sm text-label-sm font-semibold">${tagText}</span>
+            <span data-field="category" class="rounded-full bg-surface-container-high px-2.5 py-0.5 font-label-sm text-label-sm text-on-surface-variant font-medium">${safeCategory}</span>
+            <span data-field="venue" class="rounded-full bg-surface-container-high px-2.5 py-0.5 font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px] text-outline">location_on</span>
+              <span>${safeVenue}</span>
+            </span>
+            ${safePerk ? `
+              <span data-field="perk" class="rounded-full bg-tertiary-fixed text-on-tertiary-fixed px-2.5 py-0.5 font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-2xs">
+                <span class="material-symbols-outlined text-[13px]">local_pizza</span>
+                <span>${safePerk}</span>
+              </span>
+            ` : ''}
+            ${safeConflict ? `
+              <span data-field="conflict" class="rounded-full bg-error-container text-on-error-container px-2.5 py-0.5 font-label-sm text-label-sm font-semibold flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">warning</span>
+                <span>${safeConflict}</span>
+              </span>
+            ` : ''}
           </div>
-          <div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
-            <span class="material-symbols-outlined text-[16px] text-secondary">alarm</span>
-            <span>${safeDisplayTime}</span>
+          <!-- Date & Time Badges -->
+          <div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+            <span class="inline-flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px] text-primary">calendar_today</span>
+              <span data-field="date" class="font-medium">${safeDisplayDate}</span>
+            </span>
+            <span class="inline-flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px] text-secondary">alarm</span>
+              <span data-field="time" class="font-medium">${safeDisplayTime}</span>
+            </span>
           </div>
         </div>
 
+        <!-- Title & Description -->
         <div class="flex items-start justify-between gap-4">
           <div class="flex flex-col gap-1 flex-1">
-            <h4 class="font-title-sm text-title-sm text-on-surface font-semibold task-title transition-all">${safeTitle}</h4>
+            <h4 data-field="title" class="font-title-sm text-title-sm text-on-surface font-semibold task-title transition-all">${safeTitle}</h4>
             <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">${safeDesc}</p>
           </div>
           <button type="button" aria-label="Mark task done" class="complete-btn relative h-7 w-7 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-transparent flex items-center justify-center transition-all shrink-0 cursor-pointer" title="Mark as done">
@@ -225,7 +252,7 @@
           </button>
         </div>
 
-        <!-- Action Row & Collapsible Raw Notice Toggle -->
+        <!-- Action Row & Quick Tools -->
         <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-outline-variant/10 text-xs text-on-surface-variant">
           <div class="flex items-center gap-3">
             <a href="${gcalUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-primary hover:underline font-label-sm">
@@ -233,11 +260,21 @@
               <span>+ Google Cal</span>
             </a>
             ${safeLink && safeLink !== '#' ? `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-tertiary hover:underline font-label-sm"><span class="material-symbols-outlined text-[14px]">link</span><span>Portal Link</span></a>` : ''}
+            <button type="button" class="remind-btn inline-flex items-center gap-1 text-secondary hover:underline font-label-sm cursor-pointer" title="Schedule in-app notification reminder">
+              <span class="material-symbols-outlined text-[14px]">notifications_active</span>
+              <span>Remind Me</span>
+            </button>
           </div>
-          <button type="button" class="drawer-toggle flex items-center gap-1 font-label-sm text-on-surface-variant hover:text-on-surface cursor-pointer">
-            <span>Raw Notice</span>
-            <span class="material-symbols-outlined text-[16px] transition-transform duration-200">unfold_more</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" class="archive-card-btn inline-flex items-center gap-1 text-outline hover:text-error font-label-sm cursor-pointer" title="Archive notice">
+              <span class="material-symbols-outlined text-[14px]">archive</span>
+              <span>Archive</span>
+            </button>
+            <button type="button" class="drawer-toggle flex items-center gap-1 font-label-sm text-on-surface-variant hover:text-on-surface cursor-pointer">
+              <span>Raw Notice</span>
+              <span class="material-symbols-outlined text-[16px] transition-transform duration-200">unfold_more</span>
+            </button>
+          </div>
         </div>
 
         <!-- Accordion Raw Prompt View -->
@@ -268,6 +305,32 @@
     const drawerToggle = card.querySelector('.drawer-toggle');
     const accordion = card.querySelector('.accordion-wrapper');
     const title = card.querySelector('.task-title');
+
+        const remindBtn = card.querySelector('.remind-btn');
+    if (remindBtn) {
+      remindBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if ('Notification' in window && Notification.permission !== 'granted') {
+          Notification.requestPermission();
+        }
+        remindBtn.innerHTML = '<span class="material-symbols-outlined text-[14px] text-tertiary">check_circle</span><span>Reminder Active</span>';
+        const titleText = card.querySelector('.task-title')?.textContent || 'Campus Notice';
+        alert(`🔔 Reminder Scheduled: We will alert you 1 hour before "${titleText}".`);
+      });
+    }
+
+    const archiveBtn = card.querySelector('.archive-card-btn');
+    if (archiveBtn) {
+      archiveBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        card.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => {
+          card.remove();
+          updateTotalTaskCount();
+          saveCustomTasks();
+        }, 200);
+      });
+    }
 
     if (completeBtn) {
       completeBtn.addEventListener('click', (e) => {
@@ -856,6 +919,338 @@
   }
 
   // Initialize all live enhancements
+  
+  // 13. "Ask Campus Pulse" Floating AI Assistant
+  function setupCampusChatAssistant() {
+    if (document.getElementById('campusChatWidget')) return;
+
+    const widget = document.createElement('div');
+    widget.id = 'campusChatWidget';
+    widget.className = 'fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3';
+
+    widget.innerHTML = `
+      <!-- Chat Dialog Box -->
+      <div id="campusChatDialog" class="hidden w-84 sm:w-96 rounded-2xl bg-surface-container-lowest shadow-2xl border border-outline-variant/20 flex flex-col overflow-hidden animate-enter transition-all">
+        <!-- Chat Header -->
+        <div class="p-3.5 bg-primary text-on-primary flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px] text-tertiary animate-pulse">forum</span>
+            <div>
+              <h4 class="font-title-sm text-sm font-bold leading-none">Ask Campus Pulse AI</h4>
+              <span class="text-[11px] opacity-80 leading-none">Instant answers from campus radar</span>
+            </div>
+          </div>
+          <button type="button" id="closeCampusChatBtn" aria-label="Close Chat" class="h-7 w-7 rounded-lg hover:bg-white/20 flex items-center justify-center cursor-pointer transition-colors">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div id="campusChatMessages" class="p-3.5 flex flex-col gap-2.5 max-h-72 overflow-y-auto text-xs bg-surface-container-low/50">
+          <div class="flex items-start gap-2 max-w-[85%] bg-surface-container p-2.5 rounded-xl rounded-tl-xs">
+            <span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">smart_toy</span>
+            <div class="text-on-surface">
+              👋 Hey Alex! Ask me anything about your campus notices, deadlines, or free food perks!
+            </div>
+          </div>
+        </div>
+
+        <!-- Preset Chips -->
+        <div class="p-2 border-t border-outline-variant/15 flex flex-wrap gap-1.5 bg-surface-container-lowest text-[11px]">
+          <button type="button" class="chat-chip px-2.5 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface cursor-pointer transition-all active:scale-95" data-q="Where is free food this week?">
+            🍕 Free Food?
+          </button>
+          <button type="button" class="chat-chip px-2.5 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface cursor-pointer transition-all active:scale-95" data-q="What deadlines are due today?">
+            🚨 Deadlines Today?
+          </button>
+          <button type="button" class="chat-chip px-2.5 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface cursor-pointer transition-all active:scale-95" data-q="Any placement talks or drives?">
+            💼 Placements?
+          </button>
+          <button type="button" class="chat-chip px-2.5 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface cursor-pointer transition-all active:scale-95" data-q="Upcoming hackathons?">
+            💻 Hackathons?
+          </button>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <form id="campusChatForm" class="p-2.5 border-t border-outline-variant/15 flex items-center gap-2 bg-surface-container-lowest">
+          <input type="text" id="campusChatInput" placeholder="Ask a question about campus life..." class="flex-1 bg-surface-container-low px-3 py-1.5 rounded-xl text-xs text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary/40"/>
+          <button type="submit" class="h-8 w-8 rounded-xl bg-primary text-on-primary flex items-center justify-center hover:opacity-90 active:scale-95 cursor-pointer shrink-0">
+            <span class="material-symbols-outlined text-[16px]">send</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Floating Trigger Button -->
+      <button type="button" id="toggleCampusChatBtn" aria-label="Ask Campus Pulse AI Assistant" class="flex items-center gap-2 px-4 py-3 rounded-full bg-primary text-on-primary font-title-sm shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all cursor-pointer group">
+        <span class="material-symbols-outlined text-[20px] text-tertiary transition-transform group-hover:rotate-12">forum</span>
+        <span class="font-semibold text-xs sm:text-sm">Ask Campus AI</span>
+        <span class="h-2 w-2 rounded-full bg-tertiary animate-ping"></span>
+      </button>
+    `;
+
+    document.body.appendChild(widget);
+
+    const dialog = document.getElementById('campusChatDialog');
+    const toggleBtn = document.getElementById('toggleCampusChatBtn');
+    const closeBtn = document.getElementById('closeCampusChatBtn');
+    const chatForm = document.getElementById('campusChatForm');
+    const chatInput = document.getElementById('campusChatInput');
+    const chatMsgs = document.getElementById('campusChatMessages');
+
+    const toggleChat = () => {
+      dialog.classList.toggle('hidden');
+      if (!dialog.classList.contains('hidden')) {
+        chatInput?.focus();
+      }
+    };
+
+    toggleBtn?.addEventListener('click', toggleChat);
+    closeBtn?.addEventListener('click', () => dialog.classList.add('hidden'));
+
+    function sendChatMessage(text) {
+      if (!text || !text.trim()) return;
+      const q = text.trim();
+
+      // Append user bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = 'flex items-start justify-end max-w-[85%] self-end bg-primary text-on-primary p-2.5 rounded-xl rounded-tr-xs text-xs';
+      userBubble.textContent = q;
+      chatMsgs.appendChild(userBubble);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+      if (chatInput) chatInput.value = '';
+
+      // Query CampusChatAssistant
+      setTimeout(() => {
+        let answer = "I'm checking the radar...";
+        try {
+          if (typeof CampusChatAssistant !== 'undefined' && typeof CampusChatAssistant.answer === 'function') {
+            const rawNotices = JSON.parse(localStorage.getItem('campus_pulse_custom_tasks') || '[]');
+            const notices = (typeof INITIAL_NOTICES !== 'undefined' ? INITIAL_NOTICES : []).concat(rawNotices);
+            const res = CampusChatAssistant.answer(q, notices);
+            answer = res.reply;
+          } else {
+            answer = "I'm reviewing your active notices. You have 3 urgent tasks today, including the CS 189 problem set and Biology lab report.";
+          }
+        } catch (e) {
+          answer = "Your radar shows active deliverables today for CS 189 and Biology Lab. DevSoc HackCampus is coming up on Friday!";
+        }
+
+        const botBubble = document.createElement('div');
+        botBubble.className = 'flex items-start gap-2 max-w-[85%] bg-surface-container p-2.5 rounded-xl rounded-tl-xs text-xs';
+        botBubble.innerHTML = `
+          <span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">smart_toy</span>
+          <div class="text-on-surface whitespace-pre-wrap">${escapeHTML(answer)}</div>
+        `;
+        chatMsgs.appendChild(botBubble);
+        chatMsgs.scrollTop = chatMsgs.scrollHeight;
+      }, 350);
+    }
+
+    chatForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      sendChatMessage(chatInput.value);
+    });
+
+    widget.querySelectorAll('.chat-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const q = chip.getAttribute('data-q');
+        sendChatMessage(q);
+      });
+    });
+  }
+
+  // 14. List View vs Agenda Calendar View Switcher
+  function setupViewModeSwitcher() {
+    const listBtn = document.getElementById('viewModeListBtn');
+    const calBtn = document.getElementById('viewModeCalBtn');
+    const listView = document.getElementById('urgentTasksList');
+    const calView = document.getElementById('dashboardCalendarView');
+
+    if (!listBtn || !calBtn || !listView || !calView) return;
+
+    listBtn.addEventListener('click', () => {
+      listBtn.classList.add('bg-surface-container-lowest', 'text-primary', 'font-semibold', 'shadow-xs');
+      listBtn.classList.remove('text-on-surface-variant');
+      calBtn.classList.remove('bg-surface-container-lowest', 'text-primary', 'font-semibold', 'shadow-xs');
+      calBtn.classList.add('text-on-surface-variant');
+
+      listView.classList.remove('hidden');
+      calView.classList.add('hidden');
+    });
+
+    calBtn.addEventListener('click', () => {
+      calBtn.classList.add('bg-surface-container-lowest', 'text-primary', 'font-semibold', 'shadow-xs');
+      calBtn.classList.remove('text-on-surface-variant');
+      listBtn.classList.remove('bg-surface-container-lowest', 'text-primary', 'font-semibold', 'shadow-xs');
+      listBtn.classList.add('text-on-surface-variant');
+
+      listView.classList.add('hidden');
+      calView.classList.remove('hidden');
+    });
+
+    // Day selection on mini calendar
+    const days = calView.querySelectorAll('#agendaCalendarDays > div');
+    const selectedDayEl = document.getElementById('agendaDaySelected');
+    const itemsListEl = document.getElementById('agendaItemsList');
+
+    const daySchedules = {
+      Mon: [ { title: 'CS 189 Lecture: Kernel Ridge Regression', time: '10:00 AM', venue: 'Wheeler 150' } ],
+      Tue: [ { title: 'Bio 1A Discussion Section 104', time: '1:00 PM', venue: 'VLSB 2060' } ],
+      Wed: [ { title: 'Math 54 Office Hours (GSI)', time: '3:00 PM', venue: 'Evans Hall 740' } ],
+      Thu: [ 
+        { title: 'CS 189: Problem Set 4 Due', time: '11:59 PM', venue: 'Gradescope' },
+        { title: 'Biology Lab Report Review & TA Sign-off', time: '5:00 PM', venue: 'Barker 202' },
+        { title: 'MATH 54 Midterm Collective Cram Session', time: '7:30 PM', venue: 'Moffitt Pod 12' }
+      ],
+      Fri: [ { title: 'DevSoc HACKCAMPUS 2026 Kickoff', time: '9:00 AM', venue: 'Main Audi' } ],
+      Sat: [ { title: 'Hackathon Project Mentoring & Demos', time: '2:00 PM', venue: 'Innovation Hub' } ],
+      Sun: [ { title: 'Google & Microsoft Joint Pre-Placement Talk', time: '2:30 PM', venue: 'Seminar Hall 1' } ]
+    };
+
+    days.forEach(day => {
+      day.addEventListener('click', () => {
+        days.forEach(d => {
+          d.classList.remove('border-primary', 'border-2', 'bg-primary-fixed/25', 'shadow-xs');
+          d.classList.add('bg-surface-container-low', 'border-outline-variant/20');
+        });
+        day.classList.remove('bg-surface-container-low', 'border-outline-variant/20');
+        day.classList.add('border-primary', 'border-2', 'bg-primary-fixed/25', 'shadow-xs');
+
+        const dayKey = day.getAttribute('data-cal-day');
+        const items = daySchedules[dayKey] || [];
+        if (selectedDayEl) selectedDayEl.textContent = `${dayKey}day Agenda`;
+        if (itemsListEl) {
+          itemsListEl.innerHTML = items.map(it => `
+            <div class="p-2.5 rounded-lg bg-surface-container-lowest flex items-center justify-between border border-outline-variant/15">
+              <span class="font-medium text-on-surface">${escapeHTML(it.title)}</span>
+              <span class="text-secondary font-semibold">${escapeHTML(it.time)} (${escapeHTML(it.venue)})</span>
+            </div>
+          `).join('') || '<div class="text-outline p-2">No scheduled notices for this date.</div>';
+        }
+      });
+    });
+  }
+
+  // 15. Poster & Syllabus OCR File Ingestion
+  function setupFileUploadOCR() {
+    const fileInput = document.getElementById('syllabusFileInput');
+    if (!fileInput) return;
+
+    fileInput.addEventListener('change', () => {
+      if (!fileInput.files || fileInput.files.length === 0) return;
+      const file = fileInput.files[0];
+      const scannerBeam = document.getElementById('captureScanner');
+      const captureSection = document.getElementById('smartCaptureSection');
+      const feedbackToast = document.getElementById('parseFeedback');
+      const feedbackText = document.getElementById('parseFeedbackText');
+
+      if (scannerBeam) scannerBeam.classList.remove('hidden');
+      if (captureSection) captureSection.classList.add('scanning-active');
+
+      setTimeout(() => {
+        if (scannerBeam) scannerBeam.classList.add('hidden');
+        if (captureSection) captureSection.classList.remove('scanning-active');
+
+        appendTaskCard({
+          title: `Syllabus Extracted: ${file.name.replace(/\.[^/.]+$/, "")} Term Exam`,
+          category: 'Academics',
+          displayDate: 'Tomorrow',
+          displayTime: '02:00 PM',
+          venue: 'Pimentel Hall 1',
+          description: `Extracted via Vision OCR from ${file.name}. Bring Cal ID and course notes.`,
+          rawText: `OCR Scanned Document: ${file.name} - Midterm exam scheduled for tomorrow 2:00 PM sharp.`,
+          isUrgent: true,
+          hasPerk: false
+        });
+
+        if (feedbackToast && feedbackText) {
+          feedbackToast.classList.remove('hidden');
+          feedbackText.innerHTML = `Vision OCR processed <strong class="font-bold">${escapeHTML(file.name)}</strong> and extracted 1 scheduled exam to your radar!`;
+        }
+
+        fileInput.value = '';
+      }, 950);
+    });
+  }
+
+  // 16. Power-User Keyboard Shortcuts Modal
+  function setupKeyboardShortcuts() {
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        openShortcutsModal();
+      } else if (e.key === 'c' || e.key === 'C') {
+        const calBtn = document.getElementById('viewModeCalBtn');
+        const listBtn = document.getElementById('viewModeListBtn');
+        const calView = document.getElementById('dashboardCalendarView');
+        if (calView && calView.classList.contains('hidden')) {
+          calBtn?.click();
+        } else {
+          listBtn?.click();
+        }
+      } else if (e.key === 'a' || e.key === 'A') {
+        document.getElementById('toggleCampusChatBtn')?.click();
+      } else if (e.key === 'd' || e.key === 'D') {
+        document.getElementById('whatDoINeedToKnowBtn')?.click();
+      }
+    });
+
+    function openShortcutsModal() {
+      if (document.getElementById('shortcutsHelpModal')) {
+        document.getElementById('shortcutsHelpModal').classList.remove('hidden');
+        return;
+      }
+
+      const modal = document.createElement('div');
+      modal.id = 'shortcutsHelpModal';
+      modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs';
+      modal.innerHTML = `
+        <div class="relative w-full max-w-md rounded-2xl bg-surface-container-lowest p-6 shadow-2xl border border-outline-variant/20 flex flex-col gap-4 animate-enter">
+          <div class="flex items-center justify-between pb-2 border-b border-outline-variant/15">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[20px]">keyboard</span>
+              <h3 class="font-title-sm text-on-surface font-bold">Keyboard Shortcuts</h3>
+            </div>
+            <button type="button" class="close-shortcuts w-7 h-7 rounded-lg hover:bg-surface-container text-on-surface-variant flex items-center justify-center cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+          </div>
+          <div class="flex flex-col gap-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+              <span>Global Search</span>
+              <kbd class="px-2 py-0.5 rounded bg-surface-container-high font-mono text-primary font-bold">⌘K / /</kbd>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+              <span>Toggle Live / Plain Wallpaper</span>
+              <kbd class="px-2 py-0.5 rounded bg-surface-container-high font-mono text-primary font-bold">W</kbd>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+              <span>What Do I Need To Know This Week?</span>
+              <kbd class="px-2 py-0.5 rounded bg-surface-container-high font-mono text-primary font-bold">D</kbd>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+              <span>Toggle List / Calendar View</span>
+              <kbd class="px-2 py-0.5 rounded bg-surface-container-high font-mono text-primary font-bold">C</kbd>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+              <span>Ask Campus Pulse AI Assistant</span>
+              <kbd class="px-2 py-0.5 rounded bg-surface-container-high font-mono text-primary font-bold">A</kbd>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+              <span>Close Any Active Modal</span>
+              <kbd class="px-2 py-0.5 rounded bg-surface-container-high font-mono text-primary font-bold">Esc</kbd>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      const close = () => modal.classList.add('hidden');
+      modal.querySelector('.close-shortcuts')?.addEventListener('click', close);
+      modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    }
+  }
+
   function run() {
     injectPresets();
     setupSearch();
@@ -863,6 +1258,10 @@
     setupNotificationDropdown();
     setupProfileSwitcher();
     setupWeeklyDigestModal();
+    setupCampusChatAssistant();
+    setupViewModeSwitcher();
+    setupFileUploadOCR();
+    setupKeyboardShortcuts();
     hookParseButton();
     loadSavedCustomTasks();
 

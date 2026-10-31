@@ -242,7 +242,7 @@ class NoticeExtractor {
       return { venue: 'Online (Video Meet)', venueConfidence: 'medium' };
     }
 
-    return { venue: 'Campus Campus Ground / TBA', venueConfidence: 'low' };
+    return { venue: 'Campus / TBA', venueConfidence: 'low' };
   }
 
   /**
