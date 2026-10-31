@@ -657,8 +657,16 @@
     parseBtn.onclick = null;
     parseBtn.addEventListener('click', () => {
       const textarea = document.getElementById('smartCaptureInput');
-      if (textarea && textarea.value.trim()) {
-        triggerLiveParse(textarea.value.trim());
+      const val = textarea ? textarea.value.trim() : '';
+      if (val) {
+        triggerLiveParse(val);
+      } else {
+        if (textarea) {
+          textarea.value = SAMPLES.exam;
+          const clearBtn = document.getElementById('clearCaptureBtn');
+          if (clearBtn) clearBtn.classList.remove('hidden');
+        }
+        triggerLiveParse(SAMPLES.exam);
       }
     });
 
@@ -671,13 +679,23 @@
             const clip = await navigator.clipboard.readText();
             if (clip && clip.trim()) {
               const textarea = document.getElementById('smartCaptureInput');
-              if (textarea) textarea.value = clip;
+              if (textarea) {
+                textarea.value = clip;
+                const clearBtn = document.getElementById('clearCaptureBtn');
+                if (clearBtn) clearBtn.classList.remove('hidden');
+              }
               triggerLiveParse(clip);
               return;
             }
           }
         } catch (e) {}
         // Fallback realistic notice
+        const textarea = document.getElementById('smartCaptureInput');
+        if (textarea) {
+          textarea.value = SAMPLES.exam;
+          const clearBtn = document.getElementById('clearCaptureBtn');
+          if (clearBtn) clearBtn.classList.remove('hidden');
+        }
         triggerLiveParse(SAMPLES.exam);
       });
     }
