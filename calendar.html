@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>
+@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}
+::-webkit-scrollbar{display:none;}
+
+/* Choreographed Entrance Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-stagger-1 { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.05s; }
+.anim-stagger-2 { animation: fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.12s; }
+.anim-stagger-3 { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.18s; }
+.anim-stagger-4 { animation: fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.24s; }
+
+/* Micro-interaction & breathing animations */
+@keyframes breathingPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.7; }
+}
+
+.breathing-dot {
+  animation: breathingPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes softGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.2); }
+  50% { box-shadow: 0 0 0 6px rgba(79, 70, 229, 0); }
+}
+
+.active-day-glow {
+  animation: softGlow 2.8s infinite ease-in-out;
+}
+
+/* Timeline card elevation interaction */
+.timeline-card {
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.22s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s ease;
+}
+.timeline-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.09);
+}
+
+/* Checkbox bounce micro-interaction */
+@keyframes checkPop {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+.checkbox-pop {
+  animation: checkPop 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Day switch transition */
+.fade-day-transition {
+  animation: fadeInUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Dimmed calendar pills when filtered */
+.course-item-dimmed {
+  opacity: 0.18 !important;
+  filter: grayscale(0.5);
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+.day-event-pill {
+  transition: opacity 0.25s ease, filter 0.25s ease, transform 0.15s ease;
+}
+
+/* Accessibility: Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#005236","tertiary":"#005338","surface-tint":"#4d44e3","inverse-surface":"#213145","surface-container-highest":"#d3e4fe","on-secondary-fixed-variant":"#653e00","tertiary-container":"#006e4b","on-tertiary-container":"#67f4b7","on-error":"#ffffff","secondary-fixed":"#ffddb8","on-primary-fixed-variant":"#3323cc","primary-container":"#4f46e5","on-error-container":"#93000a","error":"#ba1a1a","inverse-primary":"#c3c0ff","on-background":"#0b1c30","on-primary":"#ffffff","primary-fixed":"#e2dfff","error-container":"#ffdad6","on-surface-variant":"#464555","inverse-on-surface":"#eaf1ff","on-tertiary-fixed":"#002113","on-primary-container":"#dad7ff","tertiary-fixed-dim":"#4edea3","outline-variant":"#c7c4d8","surface-dim":"#cbdbf5","on-tertiary":"#ffffff","primary":"#3525cd","secondary":"#855300","surface":"#f8f9ff","on-secondary-fixed":"#2a1700","surface-bright":"#f8f9ff","background":"#f8f9ff","on-secondary-container":"#684000","on-secondary":"#ffffff","on-primary-fixed":"#0f0069","secondary-container":"#fea619","surface-container-high":"#dce9ff","secondary-fixed-dim":"#ffb95f","surface-container-lowest":"#ffffff","surface-container":"#e5eeff","primary-fixed-dim":"#c3c0ff","tertiary-fixed":"#6ffbbe","surface-variant":"#d3e4fe","surface-container-low":"#eff4ff","outline":"#777587","on-surface":"#0b1c30"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-xs":"0.25rem","space-lg":"1.5rem","margin":"2rem","space-sm":"0.5rem","gutter":"1.5rem","space-xl":"2.5rem","gutter-sm":"1rem","margin-sm":"1rem","space-md":"1rem"},fontFamily:{"headline-md":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"title-sm":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"body-md":["Inter"],"body-lg":["Inter"],"body-sm":["Inter"],"label-md":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"label-lg":["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"]},fontSize:{"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"600"}],"display-lg":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"title-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"title-md":["18px",{"lineHeight":"26px","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"body-sm":["13px",{"lineHeight":"20px","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"display-lg-mobile":["30px",{"lineHeight":"38px","letterSpacing":"-0.015em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}};</script><link rel="stylesheet" href="css/styles.css"/></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between py-6 px-4"><div class="flex flex-col gap-6"><div class="flex items-center gap-3 px-3"><img alt="Campus Pulse Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VEqkw4JhSwXxRo6ZaRt73g7BZwGPuyG4haAeZ_Rdz94Ue0lCAnOtxAvMMNC1tYSF6Ymz9xyLt2XsY6z_YCHpHoD5uZ6rFxV2pV0vS9wbHS5ltIOyei2pvB_dtJA741h0pBU4sCQYmA3tcKwbxQCFQbEquTugOAjDZCfqQiEVIYhvcr_fD3RBPXifOpHJuqzkC9EURS7TcD7oEZxWdfHt_omvDdLq6PHY6CdohA5LBi"/><span class="font-title-md text-title-md text-primary tracking-tight">Campus Pulse</span></div><nav class="flex flex-col gap-1.5" data-active-classes="bg-primary-container text-on-primary font-title-sm shadow-[0_2px_8px_rgba(79,70,229,0.25)]"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-title-sm text-title-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="dashboard" href="index.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a><a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all bg-primary-container text-on-primary font-title-sm shadow-[0_2px_8px_rgba(79,70,229,0.25)]" data-path="calendar" href="calendar.html"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span>Calendar</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-title-sm text-title-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="ai-digest" href="ai-digest.html"><span class="material-symbols-outlined text-[20px]">auto_awesome</span><span>AI Digest</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-title-sm text-title-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="insights" href="insights.html"><span class="material-symbols-outlined text-[20px]">insights</span><span>Insights</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-title-sm text-title-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="settings-saved" href="#"><span class="material-symbols-outlined text-[20px]">bookmark_manager</span><span>Settings &amp; Saved</span></a></nav></div><div class="flex flex-col gap-4 px-2"><div class="p-3.5 bg-surface-container rounded-xl flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-primary-fixed flex items-center justify-center text-on-primary-fixed"><span class="material-symbols-outlined text-[20px]">school</span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-on-surface truncate">Fall Semester</span><span class="font-body-sm text-body-sm text-on-surface-variant">Week 8 • 4 due</span></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-8"><div class="flex items-center gap-4 flex-1 max-w-lg"><div class="relative w-full max-w-sm"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span><input class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline pl-9 pr-14 py-2 rounded-lg font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search assignments, notes, courses..." type="text"/><kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-surface-container-high text-on-surface-variant px-1.5 py-0.5 rounded font-label-sm text-label-sm">⌘K</kbd></div><button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors font-label-md text-label-md" type="button"><span class="material-symbols-outlined text-[16px]">content_paste_go</span><span>Quick Paste</span></button></div><div class="flex items-center gap-3"><button aria-label="Toggle color mode" class="w-9 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all" type="button"><span class="material-symbols-outlined text-[20px]">light_mode</span></button><button aria-label="Notifications" class="relative w-9 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary-container ring-2 ring-surface"></span></button><div class="flex items-center gap-2.5 pl-2"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-fixed" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFvIcRMV7_2e0xAjW-SdtU5eWtZMznnRS0NZtAPM3AQmsjVZcK4bVe_8vq_qtxF6uPdKTyB6Yf2HJAIuSIp3tcfx49l8yjmfKbtJeHjI1hSkeQdgYj09jxdSyjl4Fde4C1JcxeRy-HK4JV84-zJXL4qqYCdm-Cwtp2OlDSUkd90okjnyma4yh1XqKpqbeMINZHlHCeeu2MfW0AUperYbLFcTF8jmbOznzo5omcEvk"/><div class="hidden xl:flex flex-col"><span class="font-label-md text-label-md text-on-surface leading-none">Alex Rivera</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-none mt-1">Computer Science</span></div></div></div></header><main class="relative pt-16 bg-surface min-h-screen px-8 py-6 w-full"><div class="flex flex-col w-full gap-6">
+<!-- Top Command Ribbon & Calendar Meta Controls -->
+<div class="anim-stagger-1 flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-surface-container-lowest p-5 rounded-2xl shadow-sm transition-all">
+<div class="flex flex-wrap items-center gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[22px]">calendar_month</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight" id="calendarTitle">October 2025</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm animate-pulse">Midterm Season</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">UC Berkeley • 8 assignments &amp; 14 lectures this month</p>
+</div>
+</div>
+<div class="flex items-center bg-surface-container-low p-1 rounded-xl gap-1">
+<button aria-label="Previous month" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all active:scale-95" id="prevBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-highest transition-all active:scale-95" id="todayBtn" type="button">
+          Today
+        </button>
+<button aria-label="Next month" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest transition-all active:scale-95" id="nextBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Right Controls: View Switcher + Integrations Dropdown -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Segmented View Switcher -->
+<div class="bg-surface-container-low p-1 rounded-xl flex items-center gap-1 shadow-inner relative" role="tablist">
+<button class="view-tab px-3.5 py-1.5 rounded-lg font-label-md text-label-md transition-all bg-surface-container-lowest text-primary shadow-sm font-semibold active:scale-95" id="tabMonth" type="button">
+          Month
+        </button>
+<button class="view-tab px-3.5 py-1.5 rounded-lg font-label-md text-label-md transition-all text-on-surface-variant hover:text-on-surface active:scale-95" id="tabWeek" type="button">
+          Week
+        </button>
+<button class="view-tab px-3.5 py-1.5 rounded-lg font-label-md text-label-md transition-all text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 active:scale-95" id="tabSchedule" type="button">
+<span>Schedule List</span>
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+</button>
+</div>
+<!-- Sync Modal Trigger -->
+<div class="relative">
+<button class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface transition-all font-label-md text-label-md hover:scale-[1.02] active:scale-[0.98]" id="syncTrigger" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary">sync</span>
+<span>Sync Hub</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm">3 Active</span>
+</button>
+</div>
+<!-- Quick Add Event -->
+<button class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-md text-label-md shadow-sm hover:scale-[1.02] active:scale-[0.98]" id="addEventBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Add Event</span>
+</button>
+</div>
+</div>
+<!-- Course Filters & Context Tags Pill Rail -->
+<div class="anim-stagger-2 flex items-center justify-between gap-4 overflow-x-auto pb-1 scrollbar-none">
+<div class="flex items-center gap-2 min-w-max" id="filtersRail">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider pl-1">Filters:</span>
+<button class="course-chip group flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest shadow-sm hover:shadow text-on-surface font-label-md text-label-md transition-all active:scale-95 ring-1 ring-primary/20" data-course="all" type="button">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>All Calendars</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface">19</span>
+</button>
+<button class="course-chip group flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95" data-course="cs189" type="button">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span>CS 189: Machine Learning</span>
+<span class="text-xs px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant">5</span>
+</button>
+<button class="course-chip group flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95" data-course="bio1a" type="button">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span>BIO 1A: Cellular Bio</span>
+<span class="text-xs px-1.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant">4</span>
+</button>
+<button class="course-chip group flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95" data-course="stat134" type="button">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container"></span>
+<span>STAT 134: Probability</span>
+<span class="text-xs px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant">3</span>
+</button>
+<button class="course-chip group flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95" data-course="designclub" type="button">
+<span class="w-2.5 h-2.5 rounded-full bg-surface-tint"></span>
+<span>Berkeley Design Guild</span>
+<span class="text-xs px-1.5 py-0.5 rounded-full bg-surface-container-highest text-primary">2</span>
+</button>
+<button class="course-chip group flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95" data-course="events" type="button">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span>Campus Life</span>
+<span class="text-xs px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant">2</span>
+</button>
+</div>
+<!-- Quick Mini Legend -->
+<div class="hidden 2xl:flex items-center gap-4 text-on-surface-variant font-label-sm text-label-sm min-w-max">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span>Impending (&lt; 24h)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Prepared</span>
+</div>
+</div>
+</div>
+<!-- Primary Interactive Canvas: Split View (Calendar Grid + Inspector Panel) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- Main Calendar Matrix (Col 1-8 / 8 Cols on XL) -->
+<div class="anim-stagger-3 xl:col-span-8 flex flex-col bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden transition-all duration-300" id="calendarMatrixCard">
+<!-- Weekday Headings Bar -->
+<div class="grid grid-cols-7 bg-surface-container-low/60 text-center py-3">
+<div class="font-label-md text-label-md text-on-surface-variant">Sun</div>
+<div class="font-label-md text-label-md text-on-surface-variant">Mon</div>
+<div class="font-label-md text-label-md text-on-surface-variant">Tue</div>
+<div class="font-label-md text-label-md text-on-surface-variant">Wed</div>
+<div class="font-label-md text-label-md text-on-surface-variant">Thu</div>
+<div class="font-label-md text-label-md text-on-surface-variant">Fri</div>
+<div class="font-label-md text-label-md text-on-surface-variant">Sat</div>
+</div>
+<!-- Month Calendar Grid (6 rows x 7 cols) -->
+<div class="grid grid-cols-7 gap-px bg-surface-container/60 p-px" id="calendarGrid">
+<!-- Previous Month trailing: Sep 28 -->
+<div class="min-h-[110px] bg-surface-container-lowest/40 p-2.5 flex flex-col justify-between opacity-40">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface-variant">28</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="text-[11px] truncate px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Pre-term intro</div>
+</div>
+</div>
+<!-- Sep 29 -->
+<div class="min-h-[110px] bg-surface-container-lowest/40 p-2.5 flex flex-col justify-between opacity-40">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface-variant">29</span>
+</div>
+</div>
+<!-- Sep 30 -->
+<div class="min-h-[110px] bg-surface-container-lowest/40 p-2.5 flex flex-col justify-between opacity-40">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface-variant">30</span>
+</div>
+</div>
+<!-- October 1 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="1" data-day-name="Wednesday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary">1</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+</div>
+<div class="space-y-1.5 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="stat134">
+              10:00 AM • STAT 134
+            </div>
+</div>
+</div>
+<!-- Oct 2 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="2" data-day-name="Thursday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary">2</span>
+</div>
+<div class="space-y-1.5 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-tertiary-fixed text-on-tertiary-fixed-variant" data-course-type="bio1a">
+              1:00 PM • Bio Lab
+            </div>
+</div>
+</div>
+<!-- Oct 3 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="3" data-day-name="Friday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary">3</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed-variant" data-course-type="cs189">
+              CS 189 HW 2
+            </div>
+</div>
+</div>
+<!-- Oct 4 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="4" data-day-name="Saturday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary">4</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-surface-container-high text-on-surface" data-course-type="designclub">
+              Design Sync
+            </div>
+</div>
+</div>
+<!-- Oct 5 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="5" data-day-name="Sunday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">5</span>
+</div>
+</div>
+<!-- Oct 6 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="6" data-day-name="Monday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">6</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="stat134">
+              STAT Lec 11
+            </div>
+</div>
+</div>
+<!-- Oct 7 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="7" data-day-name="Tuesday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">7</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-tertiary-fixed text-on-tertiary-fixed-variant" data-course-type="bio1a">
+              BIO 1A Disc
+            </div>
+</div>
+</div>
+<!-- Oct 8 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="8" data-day-name="Wednesday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">8</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="cs189">
+              ML Study Group
+            </div>
+</div>
+</div>
+<!-- Oct 9 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="9" data-day-name="Thursday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">9</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-surface-container-high text-on-surface" data-course-type="designclub">
+              Design Critique
+            </div>
+</div>
+</div>
+<!-- Oct 10 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="10" data-day-name="Friday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">10</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed-variant" data-course-type="stat134">
+              STAT Problem Set
+            </div>
+</div>
+</div>
+<!-- Oct 11 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="11" data-day-name="Saturday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">11</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed-variant" data-course-type="events">
+              Hackathon Kickoff
+            </div>
+</div>
+</div>
+<!-- Oct 12 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="12" data-day-name="Sunday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">12</span>
+</div>
+</div>
+<!-- Oct 13 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="13" data-day-name="Monday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">13</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="cs189">
+              CS 189 Lec 14
+            </div>
+</div>
+</div>
+<!-- Oct 14 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="14" data-day-name="Tuesday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">14</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-tertiary-fixed text-on-tertiary-fixed-variant" data-course-type="bio1a">
+              BIO Lab Quiz
+            </div>
+</div>
+</div>
+<!-- Oct 15 - TODAY (DISTINCT HIGHLIGHT) -->
+<div class="day-cell active-selected-day active-day-glow min-h-[110px] bg-primary-fixed/25 p-2.5 flex flex-col justify-between relative shadow-sm cursor-pointer group rounded-xl transition-all duration-200 ring-2 ring-primary" data-day="15" data-day-name="Wednesday" data-month="Oct">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-1.5">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center font-bold shadow-sm">15</span>
+<span class="px-1.5 py-0.2 rounded bg-primary-container text-on-primary font-label-sm text-label-sm tracking-wide">TODAY</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+</div>
+</div>
+<div class="space-y-1.5 mt-2">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-2 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed-variant font-semibold flex items-center gap-1" data-course-type="cs189">
+<span class="material-symbols-outlined text-[13px]">alarm</span>
+<span>11:59 PM • CS189 Midterm</span>
+</div>
+<div class="day-event-pill text-[11px] font-label-sm truncate px-2 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="cs189">
+              2:00 PM • CS 189 Lecture
+            </div>
+<div class="day-event-pill text-[11px] font-label-sm truncate px-2 py-0.5 rounded-md bg-surface-container-high text-on-surface" data-course-type="designclub">
+              +2 more items
+            </div>
+</div>
+</div>
+<!-- Oct 16 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="16" data-day-name="Thursday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">16</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-tertiary-fixed text-on-tertiary-fixed-variant" data-course-type="bio1a">
+              Bio 1A Midterm Prep
+            </div>
+</div>
+</div>
+<!-- Oct 17 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="17" data-day-name="Friday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">17</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-tertiary-fixed text-on-tertiary-fixed-variant font-medium" data-course-type="bio1a">
+              BIO 1A Midterm 1
+            </div>
+</div>
+</div>
+<!-- Oct 18 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="18" data-day-name="Saturday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">18</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed-variant" data-course-type="events">
+              Cal Hacks Demo Day
+            </div>
+</div>
+</div>
+<!-- Oct 19 - 25 Row -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="19" data-day-name="Sunday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">19</span></div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="20" data-day-name="Monday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">20</span></div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="cs189">CS 189 Lec 15</div>
+</div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="21" data-day-name="Tuesday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">21</span></div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="stat134">STAT 134 Discussion</div>
+</div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="22" data-day-name="Wednesday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">22</span></div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-tertiary-fixed text-on-tertiary-fixed-variant" data-course-type="bio1a">BIO Lab 07</div>
+</div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="23" data-day-name="Thursday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">23</span></div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-surface-container-high text-on-surface" data-course-type="designclub">Design Workshop</div>
+</div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="24" data-day-name="Friday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">24</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed-variant" data-course-type="stat134">STAT 134 Midterm 2</div>
+</div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="25" data-day-name="Saturday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">25</span></div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed-variant" data-course-type="events">Campanile Tour</div>
+</div>
+</div>
+<!-- Oct 26 - 31 Row + Nov 1 -->
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="26" data-day-name="Sunday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">26</span></div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="27" data-day-name="Monday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">27</span></div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="cs189">CS 189 Lec 16</div>
+</div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="28" data-day-name="Tuesday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">28</span></div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="29" data-day-name="Wednesday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">29</span></div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed-variant" data-course-type="stat134">STAT Office Hours</div>
+</div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="30" data-day-name="Thursday" data-month="Oct">
+<div class="flex justify-between items-start"><span class="font-label-md text-label-md text-on-surface">30</span></div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-tertiary-fixed text-on-tertiary-fixed-variant" data-course-type="bio1a">Bio Poster Session</div>
+</div>
+</div>
+<div class="day-cell min-h-[110px] bg-surface-container-lowest p-2.5 flex flex-col justify-between hover:bg-surface-container-low transition-all duration-200 cursor-pointer group" data-day="31" data-day-name="Friday" data-month="Oct">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface">31</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">sentiment_very_satisfied</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="day-event-pill text-[11px] font-label-sm truncate px-1.5 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed-variant font-medium" data-course-type="events">Campus Halloween Rally</div>
+</div>
+</div>
+<!-- Nov 1 trailing -->
+<div class="min-h-[110px] bg-surface-container-lowest/40 p-2.5 flex flex-col justify-between opacity-40">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-label-md text-on-surface-variant">1</span>
+</div>
+<div class="space-y-1 mt-1">
+<div class="text-[11px] truncate px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Cal Football Game</div>
+</div>
+</div>
+</div>
+<!-- Quick Semester Heatmap Footer -->
+<div class="bg-surface-container-low p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-on-surface-variant font-body-sm text-body-sm">
+<div class="flex items-center gap-3">
+<span class="font-label-md text-label-md text-on-surface">Pacing Metric:</span>
+<div class="flex items-center gap-1">
+<span class="w-3 h-3 rounded-sm bg-surface-container-high transition-transform hover:scale-125" title="Light workload"></span>
+<span class="w-3 h-3 rounded-sm bg-primary-fixed transition-transform hover:scale-125" title="Moderate lectures"></span>
+<span class="w-3 h-3 rounded-sm bg-primary-container transition-transform hover:scale-125" title="Dense coursework"></span>
+<span class="w-3 h-3 rounded-sm bg-secondary-container transition-transform hover:scale-125" title="Midterm / Exam focus"></span>
+</div>
+<span class="text-xs">Peak week ahead: Oct 20–25</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-primary hover:underline font-label-md text-label-md flex items-center gap-1 active:scale-95 transition-transform" id="downloadIcsBtn" type="button">
+<span>Download Fall Syllabus ICS</span>
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Inspector / Right Day Drawer Panel (Col 9-12 / 4 Cols on XL) -->
+<div class="anim-stagger-4 xl:col-span-4 flex flex-col gap-5" id="inspectorColumn">
+<!-- Date Banner Card -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-5 transition-all" id="detailedDayPanel">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface" id="selectedDayHeading">Wednesday, Oct 15</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-primary font-label-sm text-label-sm" id="selectedDayTag">Active Day</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5" id="selectedDaySummary">4 scheduled items • 2 preparations required</p>
+</div>
+<div class="w-11 h-11 rounded-2xl bg-secondary-fixed flex flex-col items-center justify-center text-on-secondary-fixed transition-transform hover:rotate-6">
+<span class="font-label-sm text-label-sm leading-none uppercase font-bold" id="badgeMonth">OCT</span>
+<span class="font-headline-sm text-headline-sm leading-none mt-0.5 font-bold" id="badgeDay">15</span>
+</div>
+</div>
+<!-- Dynamic Countdown Urgent Pill -->
+<div class="p-3.5 bg-secondary-fixed/50 rounded-xl flex items-center justify-between transition-all hover:bg-secondary-fixed/70">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">timer</span>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-secondary-fixed-variant font-bold">Next Milestone Starts</div>
+<div class="font-body-sm text-body-sm text-on-secondary-fixed-variant">CS 189 Lecture • 2:00 PM</div>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-md text-title-md font-bold text-secondary tracking-tight" id="countdownDisplay">2h 14m 58s</span>
+<span class="block font-label-sm text-label-sm text-on-secondary-fixed-variant">remaining</span>
+</div>
+</div>
+<!-- Schedule Items Breakdown -->
+<div class="flex flex-col gap-3" id="timelineList">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Detailed Day Timeline</span>
+<!-- Item 1: Urgent Midterm Deliverable -->
+<div class="timeline-card relative p-4 rounded-xl bg-surface-container-low shadow-sm pl-4 overflow-hidden group">
+<!-- 3px Left Urgent Accent Bar -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary-container"></div>
+<div class="flex items-start justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">CS 189</span>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-error font-label-sm text-label-sm font-semibold">Midterm Release</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-on-surface mt-1.5 group-hover:text-primary transition-colors">Midterm Take-home Exam</h2>
+</div>
+<span class="font-label-md text-label-md text-secondary font-semibold">11:59 PM</span>
+</div>
+<div class="flex items-center gap-3 mt-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span>Gradescope &amp; bCourses</span>
+</span>
+<span>•</span>
+<span class="text-error font-medium">35% Final Grade</span>
+</div>
+<!-- Prep Checklist Item inside card -->
+<div class="mt-3 pt-3 bg-surface-container-lowest/80 p-2.5 rounded-lg flex items-center justify-between task-interactive" data-task-id="t1">
+<label class="flex items-center gap-2.5 cursor-pointer select-none">
+<input class="interactive-checkbox w-4 h-4 rounded text-primary-container focus:ring-primary accent-primary cursor-pointer transition-transform" type="checkbox"/>
+<span class="task-label font-label-sm text-label-sm text-on-surface transition-all">Download formula reference cheatsheet</span>
+</label>
+<span class="task-status-icon material-symbols-outlined text-[16px] text-tertiary transition-transform">check_circle</span>
+</div>
+</div>
+<!-- Item 2: Afternoon Lecture with venue -->
+<div class="timeline-card relative p-4 rounded-xl bg-surface-container-low shadow-sm pl-4 overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary-container"></div>
+<div class="flex items-start justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">CS 189</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Lecture #14</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-on-surface mt-1.5 group-hover:text-primary transition-colors">Support Vector Machines &amp; Dual Formulation</h2>
+</div>
+<span class="font-label-md text-label-md text-primary font-semibold">2:00 PM</span>
+</div>
+<div class="flex items-center gap-3 mt-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1 text-on-surface font-medium">
+<span class="material-symbols-outlined text-[16px] text-primary">pin_drop</span>
+<span>Wheeler Hall 102</span>
+</span>
+<span>•</span>
+<span>Prof. Sahai</span>
+</div>
+<!-- Prep Checklist Item -->
+<div class="mt-3 pt-3 bg-surface-container-lowest/80 p-2.5 rounded-lg flex items-center justify-between task-interactive" data-task-id="t2">
+<label class="flex items-center gap-2.5 cursor-pointer select-none">
+<input checked="" class="interactive-checkbox w-4 h-4 rounded text-primary-container focus:ring-primary accent-primary cursor-pointer transition-transform" type="checkbox"/>
+<span class="task-label font-label-sm text-label-sm text-on-surface line-through opacity-70 transition-all">Review Note 12 Lagrange multipliers</span>
+</label>
+<span class="task-status-badge text-xs px-1.5 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-semibold">Ready</span>
+</div>
+</div>
+<!-- Item 3: Virtual Study Session -->
+<div class="timeline-card relative p-4 rounded-xl bg-surface-container-low shadow-sm pl-4 overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-surface-tint"></div>
+<div class="flex items-start justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">Study Sync</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm">Hybrid</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-on-surface mt-1.5 group-hover:text-primary transition-colors">Peer Problem Set Review (Group 4)</h2>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">5:30 PM</span>
+</div>
+<div class="flex items-center gap-3 mt-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">videocam</span>
+<span>Online via Zoom (Passcode: 4891)</span>
+</span>
+</div>
+<div class="mt-3 pt-3 bg-surface-container-lowest/80 p-2.5 rounded-lg flex items-center justify-between task-interactive" data-task-id="t3">
+<label class="flex items-center gap-2.5 cursor-pointer select-none">
+<input class="interactive-checkbox w-4 h-4 rounded text-primary-container focus:ring-primary accent-primary cursor-pointer transition-transform" type="checkbox"/>
+<span class="task-label font-label-sm text-label-sm text-on-surface transition-all">Upload Section 3 Draft Code</span>
+</label>
+<span class="task-status-icon material-symbols-outlined text-[16px] text-outline transition-transform">pending</span>
+</div>
+</div>
+<!-- Item 4: Evening Library Session -->
+<div class="timeline-card relative p-4 rounded-xl bg-surface-container-low shadow-sm pl-4 overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-outline"></div>
+<div class="flex items-start justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">Quiet Focus</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-on-surface mt-1.5 group-hover:text-primary transition-colors">Independent Reading &amp; Code Debugging</h2>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">8:00 PM</span>
+</div>
+<div class="flex items-center gap-3 mt-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span>Moffitt Library 4th Fl • Silent Pod 12</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Quick Export & Sharing Panel -->
+<div class="pt-4 flex flex-col gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Fast Export Selected Day</span>
+<div class="grid grid-cols-2 gap-2">
+<button class="export-btn flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all shadow-sm active:scale-95" id="exportGCal" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary transition-transform">calendar_add_on</span>
+<span>Google Cal</span>
+</button>
+<button class="export-btn flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all shadow-sm active:scale-95" id="exportICal" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform">download_for_offline</span>
+<span>Apple iCal</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Campus Study Venue Availability Widget -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-tertiary">hub</span>
+<span class="font-title-sm text-title-sm text-on-surface">Campus Spaces Live</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm font-semibold">Berkeley Campus</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-1">
+<div class="p-3 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col gap-1 cursor-default">
+<span class="font-label-md text-label-md text-on-surface font-medium">Moffitt 3F &amp; 4F</span>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-container breathing-dot"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">78% Full • Buzzing</span>
+</div>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col gap-1 cursor-default">
+<span class="font-label-md text-label-md text-on-surface font-medium">Doe Memorial</span>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary breathing-dot"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">24% Full • Very Quiet</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Toast Notification Element -->
+<div aria-live="polite" class="fixed bottom-6 right-6 z-50 transform translate-y-16 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-inverse-surface text-inverse-on-surface shadow-xl font-label-md text-label-md" id="appToast">
+<span class="material-symbols-outlined text-[20px] text-on-tertiary-container" id="toastIcon">check_circle</span>
+<span id="toastMessage">Action completed</span>
+</div>
+<!-- Synchronisation Modal Hub (Hidden by default, triggered by Sync button) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden items-center justify-center p-4" id="syncModal">
+<div class="bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+<div class="p-6 flex items-start justify-between bg-surface-container-low/50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">sync_alt</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">External Sync Hub</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Bi-directional synchronization for classes and tasks</p>
+</div>
+</div>
+<button aria-label="Close dialog" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" id="closeSyncModal" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="p-6 space-y-4">
+<!-- Canvas LMS Integration Row -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">school</span>
+</div>
+<div>
+<div class="font-title-sm text-title-sm text-on-surface">Canvas LMS</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Last synced 14 min ago • 4 courses</div>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm font-semibold">Connected</span>
+</div>
+<!-- Google Calendar Integration Row -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">event_available</span>
+</div>
+<div>
+<div class="font-title-sm text-title-sm text-on-surface">Google Calendar</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Synced with alex.rivera@berkeley.edu</div>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm font-semibold">Connected</span>
+</div>
+<!-- Notion Workspace Integration Row -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+</div>
+<div>
+<div class="font-title-sm text-title-sm text-on-surface">Notion Database</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Fall 2025 Master Schedule DB</div>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm font-semibold">Connected</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low/70 flex items-center justify-between">
+<button class="text-outline hover:text-on-surface font-label-md text-label-md transition-colors" type="button">Manage API Tokens</button>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-all flex items-center gap-2 active:scale-95" id="triggerSyncNow" type="button">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+<span>Sync All Feeds Now</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Toast Notification Utility
+    const toast = document.getElementById('appToast');
+    const toastMessage = document.getElementById('toastMessage');
+    const toastIcon = document.getElementById('toastIcon');
+    let toastTimeout;
+
+    function showToast(message, icon = 'check_circle') {
+      if (!toast) return;
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastMessage.textContent = message;
+      toastIcon.textContent = icon;
+      toast.classList.remove('translate-y-16', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-y-16', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2600);
+    }
+
+    // Countdown Timer Micro-update
+    let remainingSeconds = (2 * 3600) + (14 * 60) + 58;
+    const countdownEl = document.getElementById('countdownDisplay');
+    if (countdownEl) {
+      setInterval(() => {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          const hrs = Math.floor(remainingSeconds / 3600);
+          const mins = Math.floor((remainingSeconds % 3600) / 60);
+          const secs = remainingSeconds % 60;
+          countdownEl.textContent = `${hrs}h ${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+        }
+      }, 1000);
+    }
+
+    // Segmented Tab switcher behavior
+    const tabs = document.querySelectorAll('.view-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'font-semibold');
+          t.classList.add('text-on-surface-variant');
+        });
+        tab.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'font-semibold');
+        tab.classList.remove('text-on-surface-variant');
+        
+        // Dynamic view message toast
+        const tabName = tab.innerText.trim();
+        showToast(`Switched to ${tabName} view`, 'calendar_view_month');
+      });
+    });
+
+    // Course Filter Chips with Calendar Pill Dimming
+    const courseChips = document.querySelectorAll('.course-chip');
+    const allDayPills = document.querySelectorAll('.day-event-pill');
+
+    courseChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        courseChips.forEach(c => {
+          c.classList.remove('bg-surface-container-lowest', 'shadow-sm', 'ring-1', 'ring-primary/20');
+          c.classList.add('bg-surface-container-low');
+        });
+        chip.classList.remove('bg-surface-container-low');
+        chip.classList.add('bg-surface-container-lowest', 'shadow-sm', 'ring-1', 'ring-primary/20');
+
+        const selectedCourse = chip.getAttribute('data-course');
+
+        allDayPills.forEach(pill => {
+          const pillType = pill.getAttribute('data-course-type');
+          if (selectedCourse === 'all' || !pillType || pillType === selectedCourse) {
+            pill.classList.remove('course-item-dimmed');
+            pill.style.transform = 'scale(1)';
+          } else {
+            pill.classList.add('course-item-dimmed');
+            pill.style.transform = 'scale(0.96)';
+          }
+        });
+      });
+    });
+
+    // Calendar Day Cell Selection & Inspector Crossfade
+    const dayCells = document.querySelectorAll('.day-cell');
+    const detailedDayPanel = document.getElementById('detailedDayPanel');
+    const selectedDayHeading = document.getElementById('selectedDayHeading');
+    const selectedDayTag = document.getElementById('selectedDayTag');
+    const selectedDaySummary = document.getElementById('selectedDaySummary');
+    const badgeMonth = document.getElementById('badgeMonth');
+    const badgeDay = document.getElementById('badgeDay');
+
+    dayCells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        dayCells.forEach(c => {
+          c.classList.remove('ring-2', 'ring-primary', 'bg-primary-fixed/20', 'active-selected-day', 'active-day-glow');
+        });
+
+        const dayNum = cell.getAttribute('data-day') || '15';
+        const dayName = cell.getAttribute('data-day-name') || 'Day';
+        const monthName = cell.getAttribute('data-month') || 'Oct';
+
+        cell.classList.add('ring-2', 'ring-primary', 'bg-primary-fixed/15', 'active-selected-day');
+
+        // Crossfade animation trigger for inspector
+        if (detailedDayPanel) {
+          detailedDayPanel.classList.remove('fade-day-transition');
+          void detailedDayPanel.offsetWidth; // Force repaint
+          detailedDayPanel.classList.add('fade-day-transition');
+
+          if (badgeDay) badgeDay.textContent = dayNum;
+          if (badgeMonth) badgeMonth.textContent = monthName.toUpperCase();
+          if (selectedDayHeading) selectedDayHeading.textContent = `${dayName}, ${monthName} ${dayNum}`;
+
+          if (dayNum === '15') {
+            if (selectedDayTag) selectedDayTag.textContent = 'Active Day';
+            if (selectedDaySummary) selectedDaySummary.textContent = '4 scheduled items • 2 preparations required';
+          } else {
+            if (selectedDayTag) selectedDayTag.textContent = 'Planned Day';
+            if (selectedDaySummary) selectedDaySummary.textContent = 'Schedule synchronized with university feeds';
+          }
+        }
+      });
+    });
+
+    // Checkbox Micro-Interactions (Scale, Bounce, Strike-through, Status Change)
+    const taskRows = document.querySelectorAll('.task-interactive');
+    taskRows.forEach(row => {
+      const checkbox = row.querySelector('.interactive-checkbox');
+      const label = row.querySelector('.task-label');
+      const icon = row.querySelector('.task-status-icon');
+      const badge = row.querySelector('.task-status-badge');
+
+      if (checkbox) {
+        checkbox.addEventListener('change', () => {
+          checkbox.classList.add('checkbox-pop');
+          setTimeout(() => checkbox.classList.remove('checkbox-pop'), 300);
+
+          if (checkbox.checked) {
+            if (label) {
+              label.classList.add('line-through', 'opacity-70');
+            }
+            if (icon) {
+              icon.textContent = 'check_circle';
+              icon.classList.remove('text-outline');
+              icon.classList.add('text-tertiary');
+            }
+            if (badge) {
+              badge.textContent = 'Completed';
+              badge.className = 'task-status-badge text-xs px-1.5 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-semibold';
+            }
+            showToast('Task marked complete!', 'task_alt');
+          } else {
+            if (label) {
+              label.classList.remove('line-through', 'opacity-70');
+            }
+            if (icon) {
+              icon.textContent = 'pending';
+              icon.classList.remove('text-tertiary');
+              icon.classList.add('text-outline');
+            }
+            if (badge) {
+              badge.textContent = 'Pending';
+              badge.className = 'task-status-badge text-xs px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-semibold';
+            }
+          }
+        });
+      }
+    });
+
+    // Add Event Button Quick Feedback
+    const addEventBtn = document.getElementById('addEventBtn');
+    if (addEventBtn) {
+      addEventBtn.addEventListener('click', () => {
+        showToast('Event composer opened', 'edit_calendar');
+      });
+    }
+
+    // Download ICS feedback
+    const downloadIcsBtn = document.getElementById('downloadIcsBtn');
+    if (downloadIcsBtn) {
+      downloadIcsBtn.addEventListener('click', () => {
+        showToast('Downloading Fall 2025 Calendar (.ics)...', 'download_done');
+      });
+    }
+
+    // Export Feedback Micro-Interactions
+    const exportGCal = document.getElementById('exportGCal');
+    const exportICal = document.getElementById('exportICal');
+
+    [exportGCal, exportICal].forEach(btn => {
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const icon = btn.querySelector('.material-symbols-outlined');
+          const span = btn.querySelector('span:last-child');
+          const prevIcon = icon ? icon.textContent : '';
+          const prevText = span ? span.textContent : '';
+
+          if (icon) {
+            icon.textContent = 'check';
+            icon.classList.add('text-tertiary');
+          }
+          if (span) span.textContent = 'Exported!';
+
+          showToast(`Exported to ${prevText}!`, 'done');
+
+          setTimeout(() => {
+            if (icon) {
+              icon.textContent = prevIcon;
+              icon.classList.remove('text-tertiary');
+            }
+            if (span) span.textContent = prevText;
+          }, 1800);
+        });
+      }
+    });
+
+    // Sync Modal Trigger
+    const syncTrigger = document.getElementById('syncTrigger');
+    const syncModal = document.getElementById('syncModal');
+    const closeSyncModal = document.getElementById('closeSyncModal');
+    const triggerSyncNow = document.getElementById('triggerSyncNow');
+
+    if (syncTrigger && syncModal && closeSyncModal) {
+      syncTrigger.addEventListener('click', () => {
+        syncModal.classList.remove('hidden');
+        syncModal.classList.add('flex');
+      });
+
+      closeSyncModal.addEventListener('click', () => {
+        syncModal.classList.add('hidden');
+        syncModal.classList.remove('flex');
+      });
+
+      syncModal.addEventListener('click', (e) => {
+        if (e.target === syncModal) {
+          syncModal.classList.add('hidden');
+          syncModal.classList.remove('flex');
+        }
+      });
+
+      if (triggerSyncNow) {
+        triggerSyncNow.addEventListener('click', () => {
+          const originalText = triggerSyncNow.innerHTML;
+          triggerSyncNow.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Syncing Feeds...</span>';
+          setTimeout(() => {
+            triggerSyncNow.innerHTML = '<span class="material-symbols-outlined text-[16px]">done</span><span>Updated!</span>';
+            showToast('All 3 external calendar sources synced!', 'sync');
+            setTimeout(() => {
+              triggerSyncNow.innerHTML = originalText;
+              syncModal.classList.add('hidden');
+              syncModal.classList.remove('flex');
+            }, 800);
+          }, 1200);
+        });
+      }
+    }
+  });
+</script></main></div><script src="js/wallpaper.js"></script></body></html>
+

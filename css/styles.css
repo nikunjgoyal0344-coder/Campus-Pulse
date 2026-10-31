@@ -152,3 +152,130 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     width: 100% !important;
   }
 }
+
+
+/* ========================================================
+   LIVE AMBIENT WALLPAPER & MESH GRADIENT ANIMATIONS
+   ======================================================== */
+
+#liveWallpaperContainer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+}
+
+.wallpaper-plain #liveWallpaperContainer {
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.wallpaper-live #liveWallpaperContainer {
+  opacity: 1 !important;
+  visibility: visible;
+}
+
+/* Organic Floating Gradient Orbs */
+.wallpaper-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.orb-indigo {
+  width: 580px;
+  height: 580px;
+  top: -10%;
+  left: -5%;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.28) 0%, rgba(53, 37, 205, 0.08) 55%, transparent 75%);
+  filter: blur(85px);
+  animation: orbDrift1 24s ease-in-out infinite alternate;
+}
+
+.orb-amber {
+  width: 490px;
+  height: 490px;
+  bottom: 5%;
+  right: -5%;
+  background: radial-gradient(circle, rgba(254, 166, 25, 0.22) 0%, rgba(133, 83, 0, 0.06) 60%, transparent 75%);
+  filter: blur(90px);
+  animation: orbDrift2 28s ease-in-out infinite alternate;
+}
+
+.orb-emerald {
+  width: 440px;
+  height: 440px;
+  top: 35%;
+  left: 20%;
+  background: radial-gradient(circle, rgba(103, 244, 183, 0.24) 0%, rgba(0, 110, 75, 0.06) 55%, transparent 75%);
+  filter: blur(80px);
+  animation: orbDrift3 21s ease-in-out infinite alternate;
+}
+
+.orb-violet {
+  width: 520px;
+  height: 520px;
+  top: 15%;
+  right: 15%;
+  background: radial-gradient(circle, rgba(195, 192, 255, 0.26) 0%, rgba(79, 70, 229, 0.08) 60%, transparent 75%);
+  filter: blur(95px);
+  animation: orbDrift4 26s ease-in-out infinite alternate;
+}
+
+/* Dark Mode Vibrancy Boost */
+.dark .orb-indigo {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, rgba(49, 46, 129, 0.15) 55%, transparent 75%);
+  filter: blur(95px);
+}
+
+.dark .orb-amber {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(120, 53, 15, 0.12) 60%, transparent 75%);
+  filter: blur(90px);
+}
+
+.dark .orb-emerald {
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.25) 0%, rgba(6, 78, 59, 0.12) 55%, transparent 75%);
+  filter: blur(85px);
+}
+
+.dark .orb-violet {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.28) 0%, rgba(76, 29, 149, 0.14) 60%, transparent 75%);
+  filter: blur(100px);
+}
+
+/* Keyframe Harmonic Drifts */
+@keyframes orbDrift1 {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(180px, 90px, 0) scale(1.16) rotate(110deg); }
+  100% { transform: translate3d(70px, 220px, 0) scale(0.92) rotate(220deg); }
+}
+
+@keyframes orbDrift2 {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(-140px, -80px, 0) scale(1.18) rotate(-90deg); }
+  100% { transform: translate3d(-60px, 70px, 0) scale(0.88) rotate(-180deg); }
+}
+
+@keyframes orbDrift3 {
+  0% { transform: translate3d(0, 0, 0) scale(0.95) rotate(0deg); }
+  50% { transform: translate3d(120px, -110px, 0) scale(1.14) rotate(160deg); }
+  100% { transform: translate3d(-80px, -160px, 0) scale(1.05) rotate(320deg); }
+}
+
+@keyframes orbDrift4 {
+  0% { transform: translate3d(0, 0, 0) scale(1.05) rotate(0deg); }
+  50% { transform: translate3d(-110px, 140px, 0) scale(0.94) rotate(-130deg); }
+  100% { transform: translate3d(140px, 80px, 0) scale(1.12) rotate(-260deg); }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .wallpaper-orb {
+    animation: none !important;
+  }
+}
